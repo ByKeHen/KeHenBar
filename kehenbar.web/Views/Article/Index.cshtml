@@ -1,0 +1,91 @@
+﻿@{
+    ViewBag.Title = "发表文章";
+    Layout = "~/Views/_LayoutPage.cshtml";
+    //ValidateRequest = "false";
+    
+}
+<form class="layui-form layui-form-pane">
+    <div class="layui-form-item">
+        <div class="layui-form-label">分类</div>
+        <div class="layui-input-block">
+            <select name="fenlei">
+                <option value="">选择一个文章分类</option>
+                @{
+                    foreach (var item in @Model)
+                    {
+                        <option value="@item.cid">@item.cname</option>
+                    }    
+                }
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-form-label">文章标题</div>
+        <div class="layui-input-block">
+            <input type="text" name="mingcheng" class="layui-input" required lay-verify="required" placeholder="文章名称"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-form-label">作者</div>
+        <div class="layui-input-block">
+            <input type="text" name="zuozhe" class="layui-input" required lay-verify="required" placeholder="作者"/>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <div class="layui-form-label">内容</div>
+        <div class="layui-input-block">
+            <textarea name="neirong" id="neirong_e" style="display:none" class="layui-textarea" placeholder="内容"/></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-form-label">关键字</div>
+        <div class="layui-input-block">
+            <input type="text" name="guanjianzi" class="layui-input" required lay-verify="required" placeholder="过个关键字用英文逗号隔开"/>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <div class="layui-form-label">简介</div>
+        <div class="layui-input-block">
+            <textarea name="jianjie" class="layui-textarea" placeholder="文章简介，不要超过200字"/></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="tijiao">提交</button>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    layui.use(['form', 'ajax', 'layedit'], function () {
+        var form = layui.form(), ajax = layui.ajax, layedit = layui.layedit;
+
+        var editIndex = layedit.build('neirong_e', {
+            uploadImage: {url:"/upload/image"}
+        }); //建立编辑器
+
+        form.on('submit(tijiao)', function (data) {
+            //alert(JSON.stringify(data.field));
+            //alert(layedit.getContent(editIndex));
+            debugger;
+            data.field.neirong = layedit.getContent(editIndex); // 编辑器内容
+            ajax.send("/article/add", data.field, function (res) {
+                if ("ok" == res) {
+                    layer.alert("文章发布成功", function (index) {
+
+                        layer.close(index);
+                        window.location.reload();
+                        return false;
+                    })
+                } else {
+                    layer.alert("文章发布失败", function (index) {
+
+                        layer.close(index);
+                        return false;
+                    })
+                }                
+            });
+            return false;
+        })
+    })
+</script>

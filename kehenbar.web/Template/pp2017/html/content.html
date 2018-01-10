@@ -1,0 +1,446 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    {kehenbar:content table=siteconfig where=(id:1)}
+    <title>[siteconfig:title]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="[siteconfig:sitekeys]">
+    <meta name="description" content="[siteconfig:desc]">
+    {/kehenbar:content}
+</head>
+<body>
+    {kehenbar:template src="header.html"}
+
+    <div class="main layui-clear">
+        <div class="wrap">
+            <div class="content detail">
+                {kehenbar:content table=forums where=(forums.id:[myparm_id])}
+                <div class="fly-panel detail-box">
+                    <h1>[forums:title]</h1>
+                    <div class="fly-tip fly-detail-hint">
+                        {kehenbar:if [forums:istop]=1}
+                        <span class="fly-tip-stick">置顶帖</span>
+                        {/kehenbar:if}
+                        {kehenbar:if [forums:isjing]=1}
+                        <span class="fly-tip-jing">精帖</span>
+                        {/kehenbar:if}
+                        {kehenbar:if [forums:state]=1}
+                        <span>未结贴</span>
+                        {/kehenbar:if}
+                        <div class="fly-list-hint">
+                            <i class="iconfont" title="回答">&#xe60c;</i> [forums:writecount]           
+                            <i class="iconfont" title="人气">&#xe60b;</i> [forums:seecount]        
+                        </div>
+                    </div>
+                    <div class="detail-about">
+                        <a class="jie-user" href="/member/home/[users:id]">
+                            <img src="[users:face]" alt="[users:name]">
+                            <cite>
+                                [users:name]
+                                <em>[forums:addtime]</em>
+                            </cite>
+                        </a>
+                        <div class="detail-hits">
+                            <span style="color: #FF7200">悬赏：[forums:feiwen]飞吻</span>
+                            {kehenbar:if [forums:users_id]=[myparm_userid]}
+                            <span class="layui-btn layui-btn-mini jie-admin" type="edit">
+                                <a href="/content/edit/[forums:id]">编辑此贴</a>
+                            </span>
+                            {/kehenbar:if}
+
+                            {kehenbar:count table=forumscollec where=(forumscollec.forums_id:[myparm_id],forumscollec.users_id:[myparm_userid])}
+                            {kehenbar:if [count:num]=0}
+                            <span class="layui-btn layui-btn-mini jie-admin " id="shoucang">收藏</span>
+                            {else}
+                            <span class="layui-btn layui-btn-mini jie-admin  layui-btn-danger" id="qxshoucang">取消收藏</span>
+                            {/kehenbar:if}
+                            {/kehenbar:count}
+                        </div>
+                    </div>
+
+                    <div class="detail-body photos" style="margin-bottom: 20px;">
+                        [forums:content]
+
+                        <div style="margin-top:20px;position:relative;width:100%;height: 35px;background-color: #eee;">
+                            <div style="width:100px;position:absolute;left:0px;top:6px;text-align: center;">分享文档</div>
+                            <div style="width:333px;position:absolute;left:100px">{kehenbar:template src=plugin/share.html}</div>
+                        </div>  
+                    </div>
+                </div>
+                {/kehenbar:content}
+
+                <div class="fly-panel detail-box" style="padding-top: 0;">
+                    <a name="comment"></a>
+                    <ul class="jieda photos" id="jieda">
+                        {kehenbar:1list table=forumscomment len=10 where=(forumscomment.forums_id:[myparm_id]) order=id page=p1}
+                        <li class="jieda-daan">
+                            <div class="detail-about detail-about-reply">
+                                <a class="jie-user" href="/member/home/[1users:id]">
+                                    <img src="[1users:face]" alt="[1users:name]">
+                                    <cite>
+                                        <i>[1users:name]</i>
+                                        <!-- <em>(楼主)</em> -->
+                                    </cite>
+                                </a>
+                                <div class="detail-hits">
+                                    <span>[1forumscomment:addtime]</span>
+                                </div>
+                                {kehenbar:if [1forumscomment:state]=2}
+                                <i class="iconfont icon-caina" title="最佳答案"></i>
+                                {/kehenbar:if}
+                            </div>
+                            <div class="detail-body jieda-body">
+                                <p>[1forumscomment:content]</p>
+                            </div>
+                            <div class="jieda-reply layui-form">
+                                <input type="hidden" value="[1forumscomment:id]" name="forumscommentid"/>
+                                <input type="hidden" value="[1users:id]" name="forumscommentuid"/>
+                                <input type="hidden" value="[1users:name]" name="forumscommentuname"/>
+                                
+                                {kehenbar:count table=forumsgg where=(forumsgg.users_id:[myparm_userid],forumsgg.forumscomment_id:[1forumscomment:id])}
+                                {kehenbar:if [count:num]=0}
+                                <span class="jieda-zan">
+                                    <input type="hidden" value="[1forumscomment:zan]" name="zancount"/>
+                                    <i class="iconfont icon-zan" lay-submit lay-filter="zanFunc"></i>
+                                    <em>[1forumscomment:zan]</em>
+                                </span>
+                                {/kehenbar:if}
+                                {kehenbar:if [count:num]>0}
+                                <span class="jieda-zan zanok">
+                                    <i class="iconfont icon-zan"></i>
+                                    <em>[1forumscomment:zan]</em>
+                                </span>
+                                {/kehenbar:if}
+                                {/kehenbar:count}
+                                <span lay-submit lay-filter="huifupinglu">
+                                    <i class="iconfont icon-svgmoban53"></i>回复
+                                </span>
+                                {kehenbar:if [1forums:users_id]=[myparm_userid] [1forums:state]<>2}
+                                 <div class="jieda-admin">
+                                    <span lay-submit lay-filter="shanchupl">删除</span>
+                                    <span class="jieda-accept" lay-submit lay-filter="cainafunc">采纳</span>
+                                  </div> 
+                                {/kehenbar:if}
+                            </div>
+                        </li>
+
+                        {kehenbar:2list table=forumscommentReplay len=100 where=(forumscommentReplay.forumscomment_id:[1forumscomment:id]) order=id}
+                        <li class="jieda-daan">
+                            <div class="detail-about detail-about-reply">
+                                <a class="jie-user" href="/member/home/[2users:id]">
+                                    <img src="[2users:face]" alt="[2users:name]">
+                                    <cite>
+                                        <i>[2users:name]</i>
+                                    </cite>
+                                </a>
+                                <div class="detail-hits">
+                                    <span>[2forumscommentReplay:addtime]</span>
+                                </div>
+                            </div>
+                            <div class="detail-body jieda-body">
+                                <p>[2forumscommentReplay:content]</p>
+                            </div>
+                            <div class="jieda-reply layui-form">
+                                <input type="hidden" value="[1forumscomment:id]" name="forumscommentid"/>
+                                <input type="hidden" value="[2users:id]" name="forumscommentuid"/>
+                                <input type="hidden" value="[2users:name]" name="forumscommentuname"/>
+                                
+                                <span lay-submit lay-filter="huifupinglu">
+                                    <i class="iconfont icon-svgmoban53"></i>回复
+                                </span>
+                                {kehenbar:if [1forums:users_id]=[myparm_userid] [1forums:state]<>2}
+                                 <div class="jieda-admin">
+                                    <span lay-submit lay-filter="shanchupl">删除</span>
+                                  </div> 
+                                {/kehenbar:if}
+                            </div>
+                        </li>
+                        {/kehenbar:2list}
+                        {/kehenbar:1list}
+                        {kehenbar:if [myparm_commentcount]=0}
+                        <li class="fly-none">没有任何回答</li> 
+                        {/kehenbar:if}
+                    </ul>
+                    <div style="margin:10px 0px 10px 0px">[kehenbar:page for=p1]</div>
+                    <div class="layui-form layui-form-pane">
+                        <a name="pinglunkuang"></a>
+                        <form method="post" id="step1" style="display:none">
+                            <div class="layui-form-item layui-form-text">
+                                <div class="layui-input-block">
+                                    <textarea id="_L_content" name="content" style="height: 150px;"></textarea>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <input type="hidden" name="tieid" value="[myparm_id]"/>
+                                <input type="hidden" id="huifutiezi_biaoji" value="1"/>
+                                <input type="hidden" id="pinglun_id" name="plid"/>
+                                <button class="layui-btn" lay-filter="huida" lay-submit>提交回答</button>
+                            </div>
+                        </form>
+                        <div id="step2" style="display:none;color:#01AAED;font-size:16px;text-align:center">
+                            <a style="color:#FF5722;cursor:pointer" lay-click lay-filter="denglu">登录</a>
+                            后留言
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="edge">
+            <dl class="fly-panel fly-list-one">
+                <dt class="fly-panel-title">最近热帖</dt>
+                {kehenbar:list table=forums len=5 orderdesc=seecount}
+                <dd>
+                    <a href="/content/index/[forums:id]">[forums:title]</a>
+                    <span><i class="iconfont">&#xe60b;</i> [forums:seecount]</span>
+                </dd>
+                {/kehenbar:list}
+            </dl>
+
+            <dl class="fly-panel fly-list-one">
+                <dt class="fly-panel-title">近期热议</dt>
+                {kehenbar:list table=forums len=5 orderdesc=writecount}
+                <dd>
+                    <a href="/content/index/[forums:id]">[forums:title]</a>
+                    <span><i class="iconfont">&#xe60c;</i> [forums:writecount]</span>
+                </dd>
+                {/kehenbar:list}
+            </dl>
+        </div>
+    </div>
+
+    {kehenbar:template src="footer.html"} 
+</body>
+</html>
+<script>
+
+    layui.use(['layedit', 'form', 'kehenbar'], function () {
+        var layedit = layui.layedit, form = layui.form(), kehenbar = layui.kehenbar;
+
+        form.on("submit(cainafunc)", function (data) {
+            layer.confirm("采纳后会结贴,确定要采纳这个回复吗？", function () {
+                if (showLogin()) {
+                    var tieid = "[myparm_id]";
+                    var plid = data.field.forumscommentid;
+                    kehenbar.send("/content/caina", { plid: plid }, function (res) {
+
+                        if (res == "success") {
+                            window.location.reload();
+
+                        } else {
+                            layer.alert(res, function (index) {
+                                layer.close(index);
+                                return false;
+                            });
+                        }
+                    })
+                }
+                return false;
+            }, function (index) {
+                layer.close(index);
+                return false;
+            })
+            return false;
+        })
+
+        form.on("submit(shanchupl)", function (data) {
+            layer.confirm("确定要删除这个回复吗？", function () { 
+                if (showLogin()) {
+                    var tieid = "[myparm_id]";
+                    var plid = data.field.forumscommentid;
+                    var zancount = data.field.zancount || 0;
+                    kehenbar.send("/content/shanchupl", { tieid: tieid, plid: plid }, function (res) {
+
+                        if (res == "success") {
+                            window.location.reload();
+                        
+                        } else {
+                            layer.alert(res, function (index) {
+                                layer.close(index);
+                                return false;
+                            });
+                        }
+                    })
+                }
+                return false;
+            }, function (index) {
+                layer.close(index);
+                return false;
+            })
+            return false;
+        })
+
+        form.on('submit(zanFunc)', function (data) {
+            var that = this;
+            if (showLogin()) {
+                var tieid = "[myparm_id]";
+                var plid = data.field.forumscommentid;
+                var zancount = data.field.zancount || 0;
+                kehenbar.send("/content/dianzan", { tieid: tieid, plid: plid }, function (res) {
+
+                    res = JSON.parse(res);
+                    if (res.code == "0") {
+                        //layer.alert("已点赞");
+                        $(that).parent().addClass("zanok").find("em").text(parseInt(zancount)+1);
+                    } else {
+                        layer.alert(res.msg, function (index) {
+                            layer.close(index);
+                            return false;
+                        });
+                    }
+                })
+            }
+            return false;
+        })
+
+        form.on("submit(huifupinglu)", function (data) {
+            //alert(data.data);
+            if (showLogin()) {
+
+                var h = $(document).height() - $(window).height();
+                $(document).scrollTop(h);
+
+                var aiteHtml = "<a href=\"/member/home/" + data.field.forumscommentuid + "\">&nbsp;@"
+                    + data.field.forumscommentuname + "&nbsp;</a>";
+
+                layedit.setContent(myedit, aiteHtml);
+                $("#huifutiezi_biaoji").val("2");
+                $("#pinglun_id").val(data.field.forumscommentid);
+            }
+            return false;
+        })
+
+        function shoucang(thiss) {
+            kehenbar.send("/content/shoucang", { tieid: [myparm_id] }, function (res) {
+                res = JSON.parse(res);
+                
+                if ("0" == res.code) {
+                    layer.alert("已收藏", function (index) {
+                        layer.close(index);
+
+                        $(thiss).text("取消收藏")
+                            .unbind("click")
+                            .bind("click", function () { qxshoucang(thiss) });
+                        return false;
+                    });
+                } else {
+                    layer.alert("网络有问题", function (index) {
+                        layer.close(index);
+                        return false;
+                    });
+                }
+            });
+        }
+        function qxshoucang(thiss) {
+            kehenbar.send("/content/qxshoucang", { tieid: [myparm_id] }, function (res) {
+                res = JSON.parse(res);
+                if ("0" == res.code) {
+                    layer.alert("取消成功", function (index) {
+                        layer.close(index);
+
+                        $(thiss).text("收藏")
+                            .unbind("click")
+                            .bind("click", function () { shoucang(thiss) });
+                        return false;
+                    });
+                } else {
+                    layer.alert("网络有问题", function (index) {
+                        layer.close(index);
+                        return false;
+                    });
+                }
+            });
+        }
+
+        $("#shoucang").unbind("click").bind("click", function () {
+            showLogin();
+            shoucang(this);            
+        })
+        $("#qxshoucang").unbind("click").bind("click", function () {
+            showLogin();
+            qxshoucang(this);
+        })
+
+        function showLogin() {
+            var userid = "[myparm_userid]";
+            if (!userid) {
+                layer.open({
+                    type: 2,
+                    title: "快速登录",
+                    area: ["420px", "480px"],
+                    content: "/member/LoginFast"
+                })
+                return false;
+            }
+            return true;
+        }
+
+        $(function () {
+            var userid = "[myparm_userid]";
+            if (!userid) {
+                $("#step2").show();
+            } else {
+                $("#step1").show();
+            }
+        })
+
+        layedit.set({
+            
+            uploadImage: {
+                url: '/upload/image?f=forums/[myparm_id]'
+            }
+        });
+        var myedit = layedit.build('_L_content', {
+            tool: ['left', 'center', 'right', '|', 'face','image','code']
+        });
+
+        form.on('click(denglu)', function () {
+            layer.open({
+                type: 2,
+                title: "快速登录",
+                area:["420px","480px"],
+                content: "/member/LoginFast"
+            })
+            return false
+        })
+
+        form.on('submit(huida)', function (data) {
+            huidafunc(data);
+            return false;
+        })
+
+        function huidafunc(data) {
+
+            var huifutiezi_biaoji = $("#huifutiezi_biaoji").val() || "1";
+            debugger;
+            var editContent = layedit.getContent(myedit);
+            if (!editContent) {
+                layer.alert("内容不能为空");
+                return false;
+            }
+
+            if ("1" == huifutiezi_biaoji) {
+                kehenbar.send("/content/Reply", { tieid: data.field.tieid, content: editContent }, function (res) {
+
+                    res = JSON.parse(res);
+                    layer.alert(res.msg, function (index) {
+                        layer.close(index);
+                        window.location.reload();
+                        return false;
+                    });
+                });
+            } else {
+                kehenbar.send("/content/ReplyPserson", { plid: data.field.plid, content: editContent }, function (res) {
+
+                    res = JSON.parse(res);
+                    layer.alert(res.msg, function (index) {
+                        layer.close(index);
+                        window.location.reload();
+                        return false;
+                    });
+                });
+            }
+        }
+    });
+</script>

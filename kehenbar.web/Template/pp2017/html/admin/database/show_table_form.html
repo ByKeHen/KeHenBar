@@ -1,0 +1,41 @@
+﻿{kehenbar:template src="admin/header.html"}
+<div style="height:20px"></div>
+<form class="layui-form layui-form-pane" id="show_table_form">
+
+    [myparm_formDaohangHtml]
+    
+</form>
+<script type="text/javascript">
+    layui.use(['form', 'kehenbar', 'laydate', 'upload'], function () {
+        var form = layui.form(), kehenbar = layui.kehenbar, laydate = layui.laydate, upload = layui.upload, $ = layui.jquery;
+
+        $(function () {
+
+            var myEdit = $("#container");
+            if (myEdit[0]) {
+                var myEditParent = myEdit.parent();
+                var myEditContent = myEdit.text();
+                myEditParent.html("<div class='layui-textarea'>" + myEditContent + "</div>");
+            }
+
+            $("#show_table_form").find("input").each(function (k, v) {
+                $(this).attr("disabled", "disabled");
+            })
+            $("#show_table_form").find("select").each(function (k, v) {
+                $(this).attr("disabled", "disabled");
+            })
+
+            $(".layui-form").find("input[name=__selectedVal]").each(function (k, v) {
+                var selectVal = $(this).val() || "0";
+                $(this).parent().find("input[type=radio][value=" + selectVal + "]").attr("checked", true);
+                $(this).parent().find("input[type=checkbox]").attr("checked", true);
+                $(this).parent().find("select").val(selectVal);
+            })
+
+            form.render();
+        })
+
+    })
+</script>
+
+{kehenbar:template src="admin/footer.html"}

@@ -1,0 +1,174 @@
+﻿<link href="/js/layui/css/layui.css" rel="stylesheet" />
+<script src="/js/layui/layui.js"></script>
+
+
+    <table class="layui-table">
+        <colgroup>
+            <col width="80">
+            <col width="150">
+            <col width="150">
+            <col width="150">
+            <col width="100">
+            <col width="150">
+            <col width="90">
+            <col width="250">
+            <col width="90">
+            <col>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>字段名</th>
+                <th>字段编号</th>
+                <th>字段类别</th>
+                <th>字段长度</th>
+                <th>描述</th>
+                <th>排序</th>
+                <th>表单位置</th>
+                <th>宽（px）</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {kehenbar:list table=sys_database_clumn where=(sys_database.tcode:[myparm_tcode]) order=order}
+            <tr class="layui-form">
+                <td>[list:i]</td>
+                <td>[sys_database_clumn:cname]</td>
+                <td>
+                    <input type="hidden" name="biaobianhao" value="[myparm_tcode]" />
+                    <a lay-click lay-filter="columnshow" style="color:#01AAED" data="[sys_database_clumn:ccode]">[sys_database_clumn:ccode]</a>
+                </td>
+                <td>[sys_database_clumn:ctype]</td>
+                <td>[sys_database_clumn:clength]</td>
+                <td>[sys_database_clumn:cmark]</td>
+                <td>
+                    <input type="number" class="layui-input" name="paixu" value="[sys_database_clumn:order]" />
+                </td>
+                <td>     
+                    <select name="tonghang" required lay-verify="required">
+                        <option value=""></option>
+                        <option value="2" {kehenbar:if [sys_database_clumn:tonghang]=2} selected {/kehenbar:if}>换行显示</option>
+                        <option value="1" {kehenbar:if [sys_database_clumn:tonghang]=1} selected {/kehenbar:if}>同行显示</option>
+                    </select>                                   
+                </td>
+                <td>
+                    <input type="number" class="layui-input" name="kuan" value="[sys_database_clumn:kuan]" />
+                </td>
+                <td>
+                    <input type="hidden" name="bianhao" value="[sys_database_clumn:ccode]" />
+                    <input type="hidden" name="biaobianhao" value="[myparm_tcode]" />
+                    <a class="layui-btn layui-btn-mini" lay-submit lay-filter="edit">修改</a>
+                    <a class="layui-btn layui-btn-mini" lay-click lay-filter="del" data="[sys_database_clumn:ccode]">删除</a>
+                </td>
+            </tr>
+            {/kehenbar:list}
+            <tr id="clumn_add_row" class="layui-form">
+                <td></td>
+                <td>
+                    <input type="text" class="layui-input" name="mingcheng" lay-verfiy="required" placeholder="中文名称" />
+                </td>
+                <td>
+                    <input type="text" class="layui-input" name="bianhao" lay-verfiy="required" placeholder="一般为英文" />
+                </td>
+                <td>
+                    <select name="leibie" lay-verify="required">
+                        <option value="varchar">字符串</option>
+                        <option value="int">整数</option>
+                        <option value="decimal">小数</option>
+                        <option value="datetime">日期</option>
+                        <option value="image">图片</option>
+                        <option value="text">文本</option>
+                        <option value="edit">编辑器</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="number" class="layui-input" lay-verfiy="number" name="changdu" placeholder="填写数字" value="100" />
+                </td>
+                <td>
+                    <input type="text" class="layui-input" name="miaoshu" placeholder="对字段的说明文字" />
+                </td>
+                <td>
+                    <input type="number" class="layui-input" lay-verfiy="number" name="shunxu" placeholder="顺序" value="1" />
+                </td>
+                <td>
+                    <input name="tonghang" type="radio" value="1" title="同行显示" />
+                    <input name="tonghang" type="radio" value="2" title="换行显示" checked/>
+                </td>
+                <td>
+                    <input type="number" class="layui-input" lay-verfiy="number" name="kuan" placeholder="宽度" value="200" />
+                </td>
+                <td>
+                    <input type="hidden" name="biaobianhao" value="[myparm_tcode]" />
+                    <a class="layui-btn layui-btn-mini" lay-submit lay-filter="save">添加</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+<script type="text/javascript">
+    layui.use(['form', 'kehenbar'], function () {
+
+        var form = layui.form(), kehenbar = layui.kehenbar, $ = layui.jquery;
+        form.on('click(del)', function (data) {
+            var biaobianhao = $(this).parent().children("input[name=biaobianhao]").val();
+            var thiss = $(this);
+            kehenbar.send('/database/clumnDel', { id: data.data, biaobh: biaobianhao }, function (res) {
+                layer.alert(res, function (index) {
+                    layer.close(index);
+                    window.location.reload();
+                    return false;
+                });
+            })
+
+            return false;
+        })
+
+        form.on('click(columnshow)', function (data) {
+            var biaobianhao = $(this).parent().children("input[name=biaobianhao]").val();
+            layer.open({
+                title: "字段展示方式",
+                type: 2,
+                content: "/database/columnshow?t=" + biaobianhao + "&c=" + data.data,
+                area: ["800px", "600px"]
+            })
+            return false;
+        })
+
+        form.on('submit(edit)', function (data) {
+
+            //alert(JSON.stringify(data.field));
+
+            kehenbar.send('/database/ColumnEdit', data.field, function (res) {
+                res = JSON.parse(res);
+                layer.alert(res.msg, function (index) {
+                    layer.close(index);
+                    window.location.reload();
+                    return false;
+                });
+            })
+            return false;
+        })
+
+        form.on('submit(save)', function (data) {
+            
+            kehenbar.send('/DataBase/ClumnAdd', data.field, function (res) {
+                res = JSON.parse(res);
+                if ("1" == res.code) {
+                    layer.msg(res.msg, function () { });
+                    return false;                
+                } else {
+
+                    layer.alert('添加成功', function (index) {
+                        layer.close(index);
+
+                        window.location.reload();
+                        return false;
+                    })                    
+                }
+            })
+            return false;
+        })
+
+    })
+</script>
+

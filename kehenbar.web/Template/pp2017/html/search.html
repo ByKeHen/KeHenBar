@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    {kehenbar:content table=siteconfig where=(id:1)}
+    <title>[siteconfig:title]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="[siteconfig:sitekeys]">
+    <meta name="description" content="[siteconfig:desc]">
+    {/kehenbar:content}
+
+</head>
+<body>
+    {kehenbar:template src="header.html"}
+
+    <div class="main layui-clear">
+        <div class="wrap">
+            <div class="content" style="margin-right:0">
+                {kehenbar:template src="main_top.html"}
+
+                <ul class="fly-list">
+                    {kehenbar:list table=forums len=20 wherelike=(forums.title:[myparm_value]) orderdesc=id page=p1}
+                    <li class="fly-list-li">
+                        <a href="/member/home/[users:id]" class="fly-list-avatar">
+                            <img src="[users:face]" alt="[users:name]">
+                        </a>
+                        <h2 class="fly-tip">
+                            <a href="/content/index/[forums:id]">[forums:title]</a>
+                            {kehenbar:if [forums:istop]=1}
+                            <span class="fly-tip-stick">置顶</span>
+                            {/kehenbar:if}
+                            {kehenbar:if [forums:isjing]=1}
+                            <span class="fly-tip-jing">精帖</span>
+                            {/kehenbar:if}
+                        </h2>
+                        <p>
+                            <span><a href="/member/home/[users:id]">[users:name]</a></span>
+                            <span>[forums:addtime]</span>
+                            <span>[forumstype:name]</span>
+                            <span class="fly-list-hint">
+                                <i class="iconfont" title="回答">&#xe60c;</i> [forums:writecount]
+                                <i class="iconfont" title="人气">&#xe60b;</i> [forums:seecount]
+                            </span>
+                        </p>
+                    </li>
+                   {/kehenbar:list}
+                </ul>
+                [kehenbar:page for=p1]
+            </div>
+        </div>
+    </div>
+
+    {kehenbar:template src="footer.html"}
+</body>
+</html>

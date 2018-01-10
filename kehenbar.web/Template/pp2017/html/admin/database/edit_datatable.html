@@ -1,0 +1,254 @@
+﻿{kehenbar:template src="admin/header.html"}
+<div style="height:20px"></div>
+<form class="layui-form layui-form-pane">
+    <div class="layui-form-item">
+        <label class="layui-form-label">选择目标表</label>
+        <div class="layui-inline">
+            <select name="tablename" lay-search lay-filter="table">
+                <option value="">选择一张表</option>
+                {kehenbar:list table=sys_database orderdesc=id}
+                <option value="[sys_database:id]">[sys_database:tname]</option>
+                {/kehenbar:list}
+            </select>            
+        </div>
+        <div class="layui-inline">        
+            <a href="https://www.ppkanshu.com/content/doc/19" style="color:#01AAED;padding-left:20px;font-weight:normal" target="_blank">看看怎么用？</a>
+        </div>
+    </div>
+    <hr />
+</form>
+<table class="layui-table">
+    <colgroup>
+        <col width="80">
+        <col width="150">
+        <col width="150">
+        <col width="120">
+        <col width="120">
+        <col width="120">
+        <col>
+    </colgroup>
+    <thead>
+        <tr>
+            <th>序号</th>
+            <th>字段名</th>
+            <th>字段编号</th>
+            <th>设为外键值</th>
+            <th>在列表显示</th>
+            <th>在列表排序</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody id="template_list" class="layui-form">
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    layui.use(['form', 'kehenbar'], function () {
+        var form = layui.form(), kehenbar = layui.kehenbar;
+
+        form.on("select(table)", function (data) {
+
+            BindListByTemp(data.value);            
+            return false;
+        })
+
+        form.on("click(save)", function (data) {
+            var obj = {};
+            obj.biaobianhao = $(this).parent().parent().find("input[name=biaobianhao]").val();
+            obj.zdbianhao = $(this).parent().parent().find("input[name=zdbianhao]").val();
+            obj.orderlb = $(this).parent().parent().find("input[name=orderlb]").val();
+
+            kehenbar.send("/database/EditDataTable_SaveOrderLb", obj, function (res) {
+                
+                res = JSON.parse(res);
+                if ("0" != res.code) {
+                    layer.alert(res.msg, function (index) {
+                        layer.close(index);
+                        return false;
+                    })
+                } else {
+                    var value = $("select[name=tablename]").val();
+                    BindListByTemp(value);
+                }
+            })
+            return false;
+        })
+
+        form.on("click(addlink)", function (data) {
+            var obj = {};
+            obj.biaobianhao = $(this).parent().parent().find("input[name=biaobianhao]").val();
+            obj.zdbianhao = $(this).parent().parent().find("input[name=zdbianhao]").val();
+
+            layer.open({
+                type: 1
+                , title: "添加连接"
+                ,area:["666px","333px"]
+                , content: [
+                      '<ul class="layui-form">'
+                      , '<li class="layui-form-item">'
+                            , '<label class="layui-form-label">已选连接</label>'
+                            , '<div class="layui-input-inline" style="width:400px">'
+                                    , '<input name="yxlj" class="layui-input" value="">'
+                            , '</div>'
+                            , '<div class="layui-input-inline" style="width:120px">'
+                                    , '<button class="layui-btn layui-btn-small layui-btn-danger" lay-click lay-filter="shanchu">删除</button>'
+                            , '</div>'
+                        , '</li>'
+                        , '<li class="layui-form-item">'
+                            , '<label class="layui-form-label">选择类型</label>'
+                            ,'<div class="layui-input-block">'
+                                , '<select name="linktype" lay-verify="required" lay-filter="linktypefunc">'
+                                    , '<option value=""></option>'
+                                    , '<option value="1">列表</option>'
+                                    , '<option value="2">表单</option>'
+                                , '</select>'
+                            , '</div>'
+                        , '</li>'
+                        , '<li class="layui-form-item">'
+                            , '<label class="layui-form-label">可选连接</label>'
+                            , '<div class="layui-input-block">'
+                                , '<select name="linkkx" lay-verify="required" lay-search>'
+                                    ,'<option value=""></option>'                       
+                                , '</select>'
+                            , '</div>'
+                        , '</li>'
+                        , '<li class="layui-form-item">'
+                            , '<div class="layui-input-block">'
+                                ,'<button class="layui-btn" lay-submit lay-filter="tijiao">确定</button>'
+                            , '</div>'
+                        , '</li>'
+                    , '</ul>'
+                ].join("")
+                , success: function (layero, index) {                    
+                    form.render();
+
+                    $(function () {
+                        kehenbar.send("/database/EditDataTable_GetLink", obj, function (res) {
+                           
+                            res = JSON.parse(res);
+                            layero.find("input[name=yxlj]").val(res.columnlink);
+                        })
+                    })
+
+                    form.on("select(linktypefunc)", function (res) {
+                        //layer.alert(res.value);
+                        obj.lianjielx = res.value;
+
+                        kehenbar.send("/database/EditDataTable_MakeLink", obj, function (html) {
+
+                            layero.find("select[name=linkkx]").html(html);
+                            form.render("select");
+                        })
+                        return false;
+                    })
+
+                    form.on("click(shanchu)", function (data) {
+                        obj.yxlj = $(this).parent().find("input[name=yxlj]").val();
+
+                        kehenbar.send("/database/EditDataTable_DelLink", obj, function (res) {
+                            res = JSON.parse(res);
+                            if ("0" == res.code) {
+                                layero.find("input[name=yxlj]").val("");
+                            } else {
+                                layer.alert(res.msg, function (index) {
+                                    layer.close(index);
+                                    return false;
+                                });
+                            }
+                        });
+                        return false;
+                    })
+
+                    form.on("submit(tijiao)", function (res) {
+
+                        obj.linkkx = res.field.linkkx;
+                        kehenbar.send("/database/EditDataTable_SaveLink", obj, function (res) {
+                            res = JSON.parse(res);
+                            if ("0" == res.code) {
+                                layer.alert("添加成功", function () {
+                                    layer.closeAll();
+                                    return false;
+                                })
+                            } else {
+                                layer.alert(res.msg, function () {
+                                    
+                                    return false;
+                                })
+                            }
+                        })
+                        return false;
+                    })
+                }
+            })
+            return false;
+        })
+
+        form.on("radio(wjfunc)", function (data) {
+            var obj = {};
+            obj.biaobianhao = $(this).parent().parent().find("input[name=biaobianhao]").val();
+            obj.zdbianhao = $(this).parent().parent().find("input[name=zdbianhao]").val();
+
+            kehenbar.send("/database/EditDataTableSave", obj, function (res) {
+                res = JSON.parse(res);
+                layer.alert(res.msg, function (index) {
+                    layer.close(index);
+                    return false;
+                });
+            })
+            return false;
+        })
+
+        form.on("switch(leibiaosxfun)", function (data) {
+            var obj = {};
+            obj.biaobianhao = $(this).parent().parent().find("input[name=biaobianhao]").val();
+            obj.zdbianhao = $(this).parent().parent().find("input[name=zdbianhao]").val();
+            if (data.elem.checked) {
+                obj.showlb = 1;
+            } else {
+                obj.showlb = 2;
+            }
+
+            kehenbar.send("/database/EditDataTable_UpdateShowlb", obj, function (res) {
+                res = JSON.parse(res);
+                if ("0" != res.code) {
+                    layer.alert(res.msg, function (index) {
+                        layer.close(index);
+                        return false;
+                    })
+                }
+            })
+            return false;
+        })
+
+        function BindListByTemp(value) {
+            var templist =
+                [
+                    '{kehenbar:tlist table=sys_database_clumn where=(sys_database_clumn.sys_database_id:' + value + ') order=orderlb}'
+                    , '<tr>'
+                        , '<td>[list:i]</td>'
+                        , '<td>[sys_database_clumn:cname]</td>'
+                        , '<td>[sys_database_clumn:ccode]</td>'
+                        , '<td title="当该表作为其他表的外键表时，对外显示的内容。">'
+                            , '<input type="radio" name="waijianzhi" value="1" title="显示" lay-filter="wjfunc" {kehenbar:tif [sys_database_clumn:waijianzhi]=1}checked{/kehenbar:tif}>'
+                        , '</td>'
+                        , '<td><input type="checkbox" name="liebiaosx" lay-skin="switch" lay-text="显示|隐藏" {kehenbar:tif [sys_database_clumn:showlb]=1}checked{/kehenbar:tif} lay-filter="leibiaosxfun"></td>'
+                        , '<td><input type="number" lay-verify="required" required class="layui-input" name="orderlb" value="[sys_database_clumn:orderlb]"/></td>'
+                        , '<td>'
+                            , '<input type="hidden" name="biaobianhao" value="[sys_database:tcode]">'
+                            , '<input type="hidden" name="zdbianhao" value="[sys_database_clumn:ccode]">'
+                            , '<button class="layui-btn layui-btn-mini" lay-click lay-filter="addlink">添加连接</button>'
+                            ,'<button class="layui-btn layui-btn-mini" lay-click lay-filter="save">保存</button>'
+                        ,'</td>'
+                    , '</tr>'
+                    , '{/kehenbar:tlist}'
+                ].join("");
+
+            kehenbar.loadByTemp(templist, function (html) {
+                $("#template_list").html(html);
+                form.render();
+            });
+        }
+    })
+</script>
+
+{kehenbar:template src="admin/footer.html"}

@@ -1,0 +1,69 @@
+﻿{kehenbar:template src="admin/header.html"}
+<div class="layui-form">    
+    <div style="height:10px"></div>
+    <div class="layui-form-item">
+        <button class="layui-btn" lay-click lay-filter="add">新建分类</button>
+        <input type="hidden" name="biaoming" value="[myparm_tableName]"/>
+    </div>
+    <table class="layui-table" lay-skin="line">
+        <thead>
+            <tr>
+                [myparm_tableTrHeader]
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            [myparm_tableTrBody]
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    layui.use(['form', 'kehenbar'], function () {
+        var form = layui.form(), kehenbar = layui.kehenbar, $ = layui.jquery;
+
+        form.on('click(add)', function (data) {
+            var bm = $(this).parent().children("input[name=biaoming]").val();
+            layer.open({
+                type: 2,
+                title: "添加菜单",
+                content: '/database/GetTableFormDaoHang?t=tj&tablename=' + bm,
+                area: ['99%', '99%']
+            })
+            return false;
+        })
+        form.on('click(edit)', function (data) {
+            var bm = $(this).parent().children("input[name=biaoming]").val();
+            window.location.href = '/database/dataDaoHangEdit?id=' + data.data + "&bm=" + bm;
+            return false;
+        })
+        form.on('click(del)', function (data) {
+            var bm = $(this).parent().children("input[name=biaoming]").val();
+            layer.confirm("删除操作执行后，会把子集元素一同删掉并且不可恢复。还要删除吗？", function () {
+                kehenbar.send("/database/dataDaoHangDel", { id: data.data, bm: bm }, function (res) {
+                    layer.alert(res, function (index) {
+
+                        layer.close(index);
+                        window.location.reload();
+                        return false;
+                    })
+                })
+            }, function (index) {
+                layer.close(index);
+            })
+            
+            return false;
+        })
+        form.on('click(addChildmenu)', function (data) {
+            var bm = $(this).parent().children("input[name=biaoming]").val();
+            layer.open({
+                type: 2,
+                title: "添加菜单",
+                content: '/database/GetTableFormDaoHang?t=zj&tablename=' + bm + "&id=" + data.data,
+                area: ['99%', '99%']
+            })
+            return false;
+        })
+    })
+</script>
+{kehenbar:template src="admin/footer.html"}

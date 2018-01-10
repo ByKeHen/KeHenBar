@@ -1,0 +1,23 @@
+﻿<div class="footer">
+    {kehenbar:content table=siteconfig where=(id:1)}
+        [siteconfig:bottommsg]<br>[siteconfig:tongji]
+    {/kehenbar:content}
+</div>
+<iframe style="display: none" src="/refresh"></iframe>
+<script type="text/javascript">
+    layui.use(['form'], function () { })
+
+    //百度推送
+    ;(function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>

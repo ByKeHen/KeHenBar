@@ -1,0 +1,113 @@
+﻿{kehenbar:template src="admin/header.html"}
+
+<style type='text/css'>
+    .pagebar {margin-top:10px}
+    .pagebar span {display:inline-block;width:40px;height:30px;border:1px solid #999; border-radius:2px;}
+    .pagebar span a{display:block;font-size:12px;text-align:center;line-height:30px}
+</style>
+<div class="layui-form">
+    <div style="height:10px"></div>
+    <div class="layui-form-item">
+        <button class="layui-btn" lay-click lay-filter="add">添加数据</button>
+        <input type="hidden" name="biaoming" value="[myparm_tableName]" />
+    </div>
+    <table class="layui-table">
+        <thead>
+            <tr>
+                <th width="50">序号</th>
+                [myparm_columnVals]
+                <th>操作</th>      
+            </tr>
+        </thead>
+        <tbody id="list_content">
+                                 
+        </tbody>
+    </table>
+    [myparm_pagebar]
+</div>
+<script type="text/javascript">
+    layui.use(['form', 'kehenbar'], function () {
+        var form = layui.form(), kehenbar = layui.kehenbar, $ = layui.jquery;
+        
+        $(function () {
+            var tempHtml = [
+                '<tr>'
+                ,'  <td>#p1</td>'                       
+                ,'  #p2'                   
+                ,'  <td>'
+                ,'      <input type="hidden" value="[myparm_tableName]" name="biaoming"/>'
+                , '      <button class="layui-btn layui-btn-mini" lay-click lay-filter="edit" data="#p3">编辑</button>'
+                , '      <button class="layui-btn layui-btn-mini" lay-click lay-filter="delete" data="#p4">删除</button>'
+                ,'  </td>'
+                ,'</tr>'
+            ]
+            var contentHtml = "";
+            var resultDt = [myparm_dt];
+       
+            $.each(resultDt, function (k, v) {
+                var _temphtml = "";
+                for (x in v) {
+                    if ("id" == x) { continue; };
+                    
+                    _temphtml += "<td title='" + v[x] + "'>" + v[x] + "</td>";
+                }
+
+                contentHtml += tempHtml.join("")
+                    .replace("#p1", [myparm_rowIndex] + (k + 1))
+                    .replace("#p2", _temphtml)
+                    .replace("#p3", v["id"])
+                    .replace("#p4", v["id"]);
+            })
+
+            
+            $("#list_content").html(contentHtml);
+        })
+
+        form.on('click(add)', function (data) {
+            var bm = $(this).parent().children("input[name=biaoming]").val();
+
+            layer.open({
+                type: 2,
+                title: "新建",
+                content: '/database/GetTableForm/' + bm,
+                area: ['99%', '99%']
+            })
+            return false;
+        })
+
+        form.on('click(edit)', function (data) {
+            var bm = $(this).parent().children("input[name=biaoming]").val();
+            window.location.href = "/database/dataEdit/" + bm + "/" + data.data;
+
+            return false;
+        })
+
+        form.on('click(delete)', function (data) {
+            var bm = $(this).parent().children("input[name=biaoming]").val();
+            layer.confirm("删除后数据不可恢复，确定要删除这条数据吗？", function () { 
+                kehenbar.send("/database/dataDel", { bm: bm, id: data.data }, function (res) {
+                    res = JSON.parse(res);
+                    if ("0" == res.code) {
+                        window.location.reload();
+                    } else {
+                        layer.msg(res.msg, function () { });
+                        return false;
+                    }
+                });
+            }, function (index) {
+                layer.close(index);
+                return false;
+            })
+            return false;
+        })
+
+        function htmlEncode(html) {
+            var temp = document.createElement("div");
+            (temp.textContent != undefined) ? (temp.textContent = html) : (temp.innerText = html);
+            var output = temp.innerHTML;
+            temp = null;
+            return output;
+        }
+    })
+</script>
+{kehenbar:template src="admin/footer.html"}

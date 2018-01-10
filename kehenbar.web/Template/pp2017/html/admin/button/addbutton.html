@@ -1,0 +1,156 @@
+﻿<form class="layui-form layui-form-pane">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">目标表</label>
+            <div class="layui-input-block">
+                <select name="biaoming" required lay-verify="required" lay-search>
+                    <option value=""></option>
+                    {kehenbar:list table=sys_database orderdesc=id}
+                    <option value="[sys_database:id]">[sys_database:tname]</option>
+                    {/kehenbar:list}
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">按钮名称</label>
+            <div class="layui-input-block" style="width: 212px">
+                <input type="text" name="mingcheng" class="layui-input" required lay-verify="required" placeholder="名称会显示在按钮上面" />
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">按钮尺寸</label>
+            <div class="layui-input-block">
+                <select name="chicun">
+                    <option value="layui-btn-mini">迷你</option>
+                    <option value="layui-btn-small">小型</option>
+                    <option value=" ">正常</option>
+                    <option value="layui-btn-big">巨大</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">按钮颜色</label>
+            <div class="layui-input-block">
+                <select name="yanse">
+                    <option value=" ">默认</option>
+                    <option value="layui-btn-primary">原始</option>
+                    <option value="layui-btn-normal">百搭</option>
+                    <option value="layui-btn-warm">暖色</option>
+                    <option value="layui-btn-danger">警告</option>
+                    <option value="layui-btn-disabled">禁用</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">按钮事件</label>
+            <div class="layui-input-block">
+                <select name="shijian" required lay-verify="required" lay-filter="ansjfilter">
+                    <option value=""></option>
+                    <option value="4">查询</option>
+                    <option value="2">删除</option>
+                    <!--<option value="1">增加</option>
+                    <option value="3">修改</option>-->
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline" div-type="chaxun">
+            <label class="layui-form-label">打开方式</label>
+            <div class="layui-input-block">
+                <select name="dakaifangshi" lay-verify="required">
+                    
+                    <option value="3">弹出框</option>
+                    <option value="1">本页面打开</option>
+                    <option value="2">新页面打开</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline" div-type="chaxun">
+            <input type="radio" name="tankuangchicun" lay-filter="bfb_radio" value="1" title="百分比">
+            <input type="radio" name="tankuangchicun" lay-filter="bfb_radio" value="2" title="像素" checked>
+        </div>
+    </div>
+    <div class="layui-form-item" div-type="chaxun">
+        <label class="layui-form-label">弹框尺寸</label>
+        <div class="layui-input-block">
+            <div class="layui-inline layui-hide" id="bfb_radio_1">
+                <div class="layui-input-inline" style="width: 88px">
+                    <input class="layui-input" type="text" name="baifenbi_k" value="80" placeholder="弹出框的宽度百分比">
+                </div>
+                <div class="layui-input-inline" style="width: 88px">
+                    <input class="layui-input" type="text" name="baifenbi_g" value="80" placeholder="弹出框的高度百分比">
+                </div>
+                <div class="layui-form-mid layui-word-aux">%</div>
+            </div>
+            <div class="layui-inline" id="bfb_radio_2">
+                <div class="layui-input-inline" style="width: 88px">
+                    <input class="layui-input" type="text" name="xiangsu_k" value="800" placeholder="弹出框的宽度像素">
+                </div>
+                <div class="layui-input-inline" style="width: 88px">
+                    <input class="layui-input" type="text" name="xiangsu_g" value="600" placeholder="弹出框的高度像素">
+                </div>
+                <div class="layui-form-mid layui-word-aux">px</div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item" div-type="chaxun">
+        <label class="layui-form-label">模版路径</label>
+        <div class="layui-input-block">
+            <input class="layui-input" type="text" name="mobanlujing" placeholder="要打开的页面的模版路径">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">参数列表</label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea" name="canshu" placeholder="多个参数用空格分割,参数值格式为表编号加字段名，例如：mp_id=sys_buttonsid mp_ppid=sys_buttonsid"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">按钮HTML</label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea" id="anniuhtml" placeholder="生成的按钮HTML,直接复制到模版文件即可使用。"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <button class="layui-btn" lay-submit lay-filter="create">生成按钮</button>
+        <a href="https://www.ppkanshu.com/content/doc/24" style="color:#01AAED;padding-left:20px;font-weight:normal" target="_blank">不会弄？看这里</a>
+    </div>
+</form>
+<script type="text/javascript">
+    layui.use(['form', 'kehenbar'], function () {
+        var form = layui.form(), kehenbar = layui.kehenbar, $ = layui.jquery;
+
+        form.on('radio(bfb_radio)', function (data) {
+            $("#bfb_radio_" + data.value).parent().children("div").removeClass("layui-hide").addClass("layui-hide");
+            $("#bfb_radio_" + data.value).removeClass("layui-hide");
+            //form.render();
+            return false;
+        })
+
+        form.on('select(ansjfilter)', function (data) {
+            var selectedval = data.value; //2删除 4查询
+            if ("2" == selectedval) {
+                $("div[div-type=chaxun]").removeClass("layui-hide").addClass("layui-hide");
+            } else {
+                $("div[div-type=chaxun]").removeClass("layui-hide");
+            }
+            return false;
+        })
+
+        form.on('submit(create)', function (data) {
+            kehenbar.send("/database/ButtonSave", data.field, function (res) {
+                res = JSON.parse(res);
+                if ("0" == res.code) {
+                    $("#anniuhtml").text(res.html);
+                    //alert(res.html);
+                } else {
+                    layer.msg(res.msg, { icon: 1 });
+                }
+            })
+            return false;
+        })
+    })
+</script>

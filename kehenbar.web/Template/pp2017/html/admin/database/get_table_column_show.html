@@ -1,0 +1,130 @@
+﻿
+<link href="/js/layui/css/layui.css" rel="stylesheet" />
+<script src="/js/layui/layui.js"></script>
+
+<form class="layui-form layui-form-pane">
+    <div class="layui-form-item">
+        <label class="layui-form-label">选择样式</label>
+        <div class="layui-input-block">
+            <select name="yangshi">
+                {kehenbar:list table=sys_columnshow orderdesc=id}              
+                <option value="[sys_columnshow:id]">[sys_columnshow:name]</option>
+                {/kehenbar:list}   
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <table class="layui-table">
+            <colgroup>
+                <col width="200">
+                <col width="200">
+                <col>
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>键</th>
+                    <th>值</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr id="tianjia">
+                    <td>
+                        <input type="text" name="jian" class="layui-input" lay-verfiy="requried"/>
+                    </td>
+                    <td>
+                        <input type="text" name="zhi" class="layui-input" lay-verfiy="requried" />
+                    </td>
+                    <td>
+                        <button class="layui-btn layui-btn-mini" lay-click lay-filter="add">添加</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="hidden" name="biaoming" value="[myparm_tcode]" />
+            <input type="hidden" name="zdming" value="[myparm_ccode]" />
+            <button class="layui-btn" lay-click lay-filter="save">提交</button>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    layui.use(['form', 'kehenbar'], function () {
+        var form = layui.form(), kehenbar = layui.kehenbar, $ = layui.jquery;
+        
+        var valstr = '[myparm_showtype]';
+        var keyval = [];//键值数组
+        var config = {};
+
+        $(function () {
+           
+            config = (valstr && JSON.parse(valstr)) || { keyval: [] };
+            keyval = config.keyval;
+            $("select[name=yangshi]").val(config.yanshi);
+            $.each(config.keyval, function (k, v) {
+                var tr_row = [
+                    '<tr>'
+                    , '    <td>'
+                    , '        <input type="text" name="jian" class="layui-input" lay-verfiy="requried" value="' + v.jian + '"/>'
+                    , '    </td>'
+                    , '    <td>'
+                    , '        <input type="text" name="zhi" class="layui-input" lay-verfiy="requried" value="' + v.zhi + '"/>'
+                    , '    </td>'
+                    , '    <td>'
+                    //, '        <button class="layui-btn layui-btn-mini" lay-click lay-filter="add">添加</button>'
+                    , '    </td>'
+                    , '</tr>'
+                ].join("");
+                $(tr_row).insertBefore("#tianjia");
+            })
+
+            form.render();
+        })
+
+        form.on('click(save)', function (data) {
+          
+            config.table = $(this).parent().children("input[name=biaoming]").val();
+            config.column = $(this).parent().children("input[name=zdming]").val();
+            config.yanshi = $("select[name=yangshi]").val();
+            config.colname = $("select[name=yangshi]").find("option:selected").text();
+            config.keyval = keyval;
+
+            //layer.alert(JSON.stringify(config));
+            kehenbar.send("/database/columnshowadd", config, function (res) {
+                layer.alert(res, function (index) {
+                    layer.close(index);
+                    return false;
+                });
+            });
+            return false;
+        })
+
+        form.on('click(add)', function (data) {
+            
+            var obj = {};
+            obj.jian = $(this).parent().parent().find("input[name=jian]").val();
+            obj.zhi = $(this).parent().parent().find("input[name=zhi]").val();
+            keyval.push(obj);
+
+            var tr_row = [
+                '<tr>'
+                , '    <td>'
+                , '        <input type="text" name="jian" class="layui-input" lay-verfiy="requried" value="' + obj.jian + '"/>'
+                , '    </td>'
+                , '    <td>'
+                , '        <input type="text" name="zhi" class="layui-input" lay-verfiy="requried" value="' + obj.zhi + '"/>'
+                , '    </td>'
+                , '    <td>'
+                //, '        <button class="layui-btn layui-btn-mini" lay-click lay-filter="add">添加</button>'
+                , '    </td>'
+                , '</tr>'
+            ].join("");
+            $(tr_row).insertBefore("#tianjia");
+            //layer.alert(JSON.stringify(data.field));
+
+            return false;
+        })
+    })
+</script>

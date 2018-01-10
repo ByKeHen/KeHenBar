@@ -1,0 +1,61 @@
+﻿<form class="layui-form layui-form-pane">
+    <div class="layui-form-item">
+        <label class="layui-form-label">表名</label>
+        <div class="layui-input-block">
+            <input type="text" name="biaoming" lay-verfiy="required" placeholder="中文表名" class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">表编号</label>
+        <div class="layui-input-block">
+            <input type="text" name="biaobianhao" lay-verfiy="required" placeholder="表英文名" class="layui-input" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">表类别</label>
+        <div class="layui-input-block">
+            <select name="leibie">
+                <option value="1">数据表</option>
+                <option value="2">导航表</option>
+                <option value="3">系统表</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">表说明</label>
+        <div class="layui-input-block">
+            <textarea name="biaoshuoming" placeholder="说明" class="layui-textarea"></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <button class="layui-btn" lay-submit lay-filter="tijiao">提交</button>
+        <a href="https://www.ppkanshu.com/content/doc/6" style="color:#01AAED;padding-left:20px" target="_blank">如何新建？</a>
+    </div>
+</form>
+<script type="text/javascript">
+    layui.use(['form', 'kehenbar'], function () {
+        var form = layui.form(), kehenbar = layui.kehenbar;
+        form.on('submit(tijiao)', function (data) {
+
+            //alert(JSON.stringify(data.field));
+            kehenbar.send('/database/tablesave', data.field, function (res) {
+                if ("success" == res) {
+                    layer.alert("添加成功", function (index) {
+                        layer.close(index);
+                        window.location.href = '/database/index#table';
+                    });
+                } else if ("have" == res) {
+                    layer.alert("已经存在这个表", function (index) {
+                        layer.close(index);
+                    });
+                } else {
+                    layer.msg("添加失败", function () { });
+                    return false;
+                }
+            })
+
+            return false;
+        })
+    })
+</script>

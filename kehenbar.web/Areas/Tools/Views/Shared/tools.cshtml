@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="/css/font.css" rel="stylesheet" />
+    <link href="/css/global.css" rel="stylesheet" />
+    <link href="/js/layui/css/layui.css" rel="stylesheet" />
+    <script src="/js/layui/layui.js"></script>
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords"/>
+    <meta name="description" content="@ViewBag.Description"/>
+    <meta name="author" content="@ViewBag.Author"/>
+</head>
+<body>
+    <div class="header">
+
+    </div>
+    <div class="main layui-clear" style="margin-top: 70px">
+        @RenderBody()
+    </div>
+    <div class="footer">
+
+    </div>
+</body>
+</html>
+<script>
+    layui.use(['element'], function () {
+
+        layui.jquery(".header").load("/top/index");
+        layui.jquery(".footer").load("/bottom/index");
+    });
+</script>

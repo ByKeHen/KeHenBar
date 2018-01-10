@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>用户中心</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="fly,layui,前端社区">
+    <meta name="description" content="Fly社区是模块化前端UI框架Layui的官网社区，致力于为web开发提供强劲动力">
+</head>
+<body>
+    {kehenbar:template src="header.html"}
+
+
+    <div class="main fly-user-main layui-clear">
+        {kehenbar:template src="/user/usermenu.html"}
+
+        <div class="site-tree-mobile layui-hide">
+            <i class="layui-icon">&#xe602;</i>
+        </div>
+        <div class="site-mobile-shade"></div>
+
+        <div class="fly-panel fly-panel-user" pad20>
+            <!--
+            <div class="fly-msg" style="margin-top: 15px;">
+              您的邮箱尚未验证，这比较影响您的帐号安全，<a href="activate.html">立即去激活？</a>
+            </div>
+            -->
+            <div class="layui-tab layui-tab-brief">
+                <ul class="layui-tab-title">
+                    <li class="layui-this" data="tz">我发的帖（<span>[myparm_allcount]</span>）</li>
+                    {kehenbar:count table=forumscollec where=(forumscollec.users_id:[myparm_userid])}
+                    <li data="sc">我收藏的帖（<span>[count:num]</span>）</li>
+                    {/kehenbar:count}
+                </ul>
+                <div class="layui-tab-content" style="padding: 20px 0;">
+                    <div name="tzcontent" class="layui-tab-item layui-show">
+                        <ul class="mine-view jie-row">
+                            {kehenbar:list table=forums len=10 where=(users_id:[myparm_userid]) order=id page=p1}
+                            <li>
+                                <a class="jie-title" href="/content/index/[forums:id]" target="_blank">[forums:title]</a>
+                                <i>[forums:addtime]</i>
+                                <a class="mine-edit" href="/content/edit/[forums:id]">编辑</a>
+                                <em>[forums:seecount]阅/[forums:writecount]答</em>
+                            </li> 
+                            {/kehenbar:list}                           
+                        </ul>
+                        <div>
+                            [kehenbar:page for=p1]
+                        </div>
+                    </div>
+                    <div name="sccontent" class="layui-tab-item">
+                        <ul class="mine-view jie-row">
+                            {kehenbar:list table=forumscollec len=10 where=(forumscollec.users_id:[myparm_userid]) order=id page=p2}
+                            <li>
+                                <a class="jie-title" href="/content/index/[forums:id]" target="_blank">[forums:title]</a>
+                                <i>收藏于[forumscollec:addtime]</i>  
+                            </li>
+                            {/kehenbar:list}     
+                        </ul>
+                        <div>[kehenbar:page for=p2]</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {kehenbar:template src="footer.html"}
+
+</body>
+</html>
+<script type="text/javascript">
+    layui.use(['form', 'kehenbar'], function () {
+        var form = layui.form(), kehenbar = layui.kehenbar;
+        
+        $(".layui-tab-title>li").on("click", function () {
+            var that = this;
+
+            var leibie = $(that).attr("data");
+
+            $(".layui-tab-title>li").removeClass("layui-this");
+            $(that).addClass("layui-this");
+            $(".layui-tab-content>div").removeClass("layui-show");
+            $("div[name=" + leibie + "content]").addClass("layui-show");
+        })
+    })
+</script>

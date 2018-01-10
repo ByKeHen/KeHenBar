@@ -1,0 +1,79 @@
+﻿@{
+    ViewBag.Title = "编辑分类";
+    Layout = "~/Views/_LayoutPage.cshtml";
+}
+
+
+<form class="layui-form">
+    <div class="layui-form-item">
+        <div class="layui-form-label">名称</div>
+        <div class="layui-input-block">
+            <input type="text" name="mingcheng" class="layui-input" required lay-verigy="requierd" placeholder="类别名称" value="@Model.cname"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-form-label">是否显示</div>
+        <div class="layui-input-block">
+            <select name="shifouXS">
+                <option value="1">在导航栏显示</option>
+                <option value="2">不显示</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-form-label">分类图标</div>
+        <div class="layui-input-block">
+            <div class="layui-inline">
+                <img src="@Model.pic" style="width:64px;height:64px" id="img_tubiao"/>
+                <input type="hidden" name="tubiao" id="tubiao" class="layui-input"/>            
+            </div>
+            <div class="layui-inline">
+                <input type="file" name="file" class="layui-upload-file">
+            
+            </div>
+        </div>
+        
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="hidden" name="cid" value="@Model.cid"/>
+            <button class="layui-btn" lay-submit lay-filter="tijiao">提交</button>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    layui.use(['form', 'ajax', 'upload'], function () {
+        var form = layui.form(), ajax = layui.ajax,$=layui.jquery;
+
+        form.on('submit(tijiao)', function (data) {
+            //alert(JSON.stringify(data.field));
+
+            ajax.send("/category/save", data.field, function (res) {
+
+                layer.alert(res, function (index) {
+
+                    layer.close(index);
+                    window.location.reload();
+                    return false;
+                })
+            });
+            return false;
+        })
+
+        layui.upload({
+            url: '/upload/Image?f=categorys'
+          , ext: 'jpg|png|gif' 
+          , success: function (res) {
+              var data = res;
+              $("#tubiao").val(data.data.src);
+              $("#img_tubiao").attr("src", data.data.src + "?r=" + Math.random());
+              
+          }
+        });
+
+        $(function () {
+            $("select[name=shifouXS]").val("@Model.cshow");
+            form.render("select");
+        })
+    })
+</script>

@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    {kehenbar:content table=siteconfig where=(id:1)}
+    <title>[siteconfig:title]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="[siteconfig:sitekeys]">
+    <meta name="description" content="[siteconfig:desc]">
+    {/kehenbar:content}
+</head>
+<body>
+    {kehenbar:template src="header.html"}
+
+    <div class="main layui-clear">
+        <div class="fly-panel" pad20>
+            <h2 class="page-title">发表问题</h2>
+
+            <div class="layui-form layui-form-pane">
+                <form action="" method="post">
+                    <div class="layui-form-item">
+                        <label for="L_title" class="layui-form-label">标题</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-form-text">
+                        <div class="layui-input-block">
+                            <textarea id="L_content" name="content" placeholder="请输入内容" class="layui-textarea fly-editor" style="height: 260px;"></textarea>
+                        </div>
+                        <label for="L_content" class="layui-form-label" style="top: -2px;">描述</label>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">所在类别</label>
+                            <div class="layui-input-block">
+                                <select lay-verify="required" name="leibie">
+                                    <option value=""></option>
+                                    {kehenbar:list table=forumstype}
+                                    <option value="[forumstype:id]">[forumstype:name]</option>
+                                    {/kehenbar:list}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">悬赏飞吻</label>
+                            <div class="layui-input-block">
+                                <select name="experience">
+                                    <option value="5" selected>5</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="L_vercode" class="layui-form-label">人类验证</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="L_vercode" name="vercode" required lay-verify="required" placeholder="请回答后面的问题" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid">
+                            <span style="color: #c00;">[VerCode]</span>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <button class="layui-btn" lay-filter="fabu" lay-submit>立即发布</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {kehenbar:template src="footer.html"} 
+</body>
+</html>
+<script>
+    layui.use(['layedit', 'form', 'kehenbar'], function () {
+        var layedit = layui.layedit, form = layui.form(), kehenbar = layui.kehenbar;
+        
+        layedit.set({
+
+            uploadImage: {
+                url: '/upload/image?f=forums/[myparm_id]'
+            }
+        });
+        var myedit = layedit.build('L_content', {
+            tool: ['left', 'center', 'right', '|', 'face', 'image', 'code']
+        });
+
+
+        form.on('submit(fabu)', function (data) {
+
+            var editContent = layedit.getContent(myedit);
+            if (!editContent) {
+                layer.alert("内容不能为空");
+                return false;
+            }
+
+            data.field.content = editContent;
+
+            var userid = "[myparm_userid]";
+            if (!userid) {
+                layer.confirm("登陆后在发帖,去登陆？", function (index) {
+                    layer.open({
+                        type: 2,
+                        title: "快速登录",
+                        area: ["420px", "480px"],
+                        content: "/member/LoginFast"
+                    })
+                    return false;
+                }, function (index) {
+                    layer.close(index);
+                    return false;
+                });
+            }
+
+            kehenbar.send("/content/AddSave", data.field, function (res) {
+
+                res = JSON.parse(res);
+                layer.alert(res.msg, function (index) {
+                    layer.close(index);
+                    window.location.reload();
+                    return false;
+                });
+            });
+            return false;
+        })
+    });
+</script>

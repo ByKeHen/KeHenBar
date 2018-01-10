@@ -1,0 +1,69 @@
+﻿@{
+    ViewBag.Title = @Model.atitle + "-包子的博客";
+    ViewBag.KeyWords = @Model.akeywords;
+    ViewBag.Description = @Model.adescription;
+    ViewBag.Author = @Model.aAuthor;
+    Layout = "~/Views/_LayoutWeb.cshtml";
+}
+
+<div class="detail-box">
+    <h1>@Model.atitle</h1>
+    <div class="detail-about"><span style="color: #01AAED">@Model.aAuthor</span> | 发布于 @Model.adatetime</div>
+    <div class="detail-body">
+        @Html.Raw(@Model.acontent)
+    </div>
+    <form class="layui-form layui-form-pane">
+        @{
+            List<myBlog.model.mb_comments> pl = (List<myBlog.model.mb_comments>)ViewBag.PingLun;
+            foreach (var item in pl)
+            {
+            <div class="layui-form-item layui-form-text">
+                <div class="layui-form-label">@item.ctime</div>
+                <div class="layui-input-block">
+                    <div class="layui-textarea">@Html.Raw(@item.cContent)</div>
+                </div>
+            </div>
+            }
+        }
+    </form>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-form-item layui-form-text">
+            <div class="layui-form-label">说说我的看法</div>
+            <div class="layui-input-block">
+                <textarea id="pinlun_e" style="display: none"></textarea>
+
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" name="aid" value="@Model.aid"/>
+                <button class="layui-btn" lay-submit lay-filter="pinlun">发表</button>
+            </div>
+        </div>
+    </form>
+    </div>
+    <script type="text/javascript">
+        layui.use(['layedit', 'ajax', 'form'], function () {
+            var layedit = layui.layedit, ajax = layui.ajax, form = layui.form();
+
+            var editIndex = layedit.build('pinlun_e', {
+                uploadImage: { url: "/upload/image" },
+                tool: ['image', 'face', 'link', '|', 'strong', 'del', 'underline'],
+                height: 150
+            }); //建立编辑器
+
+            form.on('submit(pinlun)', function (data) {
+                debugger;
+                data.field.pinglun = layedit.getContent(editIndex); // 编辑器内容
+                ajax.send("/article/pingLun", data.field, function (res) {
+                    debugger;
+                    layer.alert(res, function (index) {
+                        layer.close(index);
+                        window.location.reload();
+                        return false;
+                    })
+                })
+                return false;
+            })
+        })
+    </script>

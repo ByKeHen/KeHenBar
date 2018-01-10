@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>我的消息</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="fly,layui,前端社区">
+    <meta name="description" content="Fly社区是模块化前端UI框架Layui的官网社区，致力于为web开发提供强劲动力">
+
+</head>
+<style type="text/css">
+    .layui-elem-quote a{
+        color:#0094ff
+    }
+</style>
+<body>
+    {kehenbar:template src="header.html"}
+
+
+    <div class="main fly-user-main layui-clear">
+        {kehenbar:template src="/user/usermenu.html"}
+
+        <div class="site-tree-mobile layui-hide">
+            <i class="layui-icon">&#xe602;</i>
+        </div>
+        <div class="site-mobile-shade"></div>
+
+        <div class="fly-panel fly-panel-user" pad20>
+            <div class="layui-tab layui-tab-brief" lay-filter="user" id="LAY_msg" style="margin-top: 15px;">
+                <button class="layui-btn layui-btn-danger" id="LAY_delallmsg">清空全部消息</button>
+                <div id="LAY_minemsg" style="margin-top: 10px;">
+                    {kehenbar:count table=usersmsg where=(users_id:[myparm_userid])}
+                    {kehenbar:if [count:num]=0}
+                    <div class="fly-none">您暂时没有最新消息</div>
+                    {/kehenbar:if}
+                    {/kehenbar:count}
+                    <ul class="mine-msg">
+                        {kehenbar:list table=usersmsg where=(users_id:[myparm_userid]) len=10 orderdesc=id page=p1}
+                        <li>
+                            <blockquote class="layui-elem-quote">
+                                [usersmsg:content]
+                            </blockquote>
+                            <p>
+                                <span>[usersmsg:addtime]</span>
+                                <a href="javascript:;" data="[usersmsg:id]" class="layui-btn layui-btn-small layui-btn-danger fly-delete">删除</a>
+                            </p>
+                        </li>
+                        {/kehenbar:list}
+                    </ul>
+                    [kehenbar:page for=p1]
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {kehenbar:template src="footer.html"}
+</body>
+</html>
+<script type="text/javascript">
+    $("#LAY_delallmsg").on("click", function () {
+        layer.confirm("确定要清空消息吗？", function (index) {
+            $.get("/member/qingkongxx", function (res) {
+                res = JSON.parse(res);
+                if ("0" == res.code) {
+                    window.location.reload();
+                    return false;
+                } else {
+                    layer.alert("网络错误", function (index) {
+                        layer.close(index);
+                        return false;
+                    });
+                }
+            })
+            return false;
+        }, function (index) {
+            layer.close(index);
+            return false;
+        })
+    })
+
+    $(".fly-delete").on("click", function () {
+        var mid = $(this).attr("data");
+        var that = this;
+        layer.confirm("确定要删除这条消息吗？", function (index) { 
+            $.post("/member/shanchuxx", { mid: mid }, function (res) {
+                res = JSON.parse(res);
+                if ("0"==res.code) {
+                    $(that).parent().parent().remove();
+                    layer.close(index);
+                    return false;
+                } else {
+                    layer.alert("网络错误", function (index) {
+                        layer.close(index);
+                        return false;
+                    });
+                }            
+            })
+            return false;
+        }, function (index) {
+            layer.close(index);
+            return false;
+        })
+    })
+</script>

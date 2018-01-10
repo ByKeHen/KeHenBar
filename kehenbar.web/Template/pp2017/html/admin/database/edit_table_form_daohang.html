@@ -1,0 +1,81 @@
+﻿{kehenbar:template src="admin/header.html"}
+
+<form class="layui-form layui-form-pane">
+    
+    [myparm_formDaohangHtml]
+    <div class="layui-form-item">
+        <input type="hidden" name="tablename" value="[myparm_tablename]" />
+        <input type="hidden" name="rowId" value="[myparm_id]" />
+        <button class="layui-btn" lay-submit lay-filter="editsave">提交</button>
+    </div>
+</form>
+
+
+<!-- 配置文件 -->
+<script type="text/javascript" src="/js/ueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="/js/ueditor/ueditor.all.js?r=12"></script>
+<script type="text/javascript">
+    layui.use(['form', 'kehenbar', 'laydate', 'upload'], function () {
+        var form = layui.form(), kehenbar = layui.kehenbar, laydate = layui.laydate, upload = layui.upload, $ = layui.jquery;
+        
+        var ue = UE.getEditor('container');
+        form.on('submit(editsave)', function (data) {
+            
+            ue.ready(function () {
+                //获取html内容，返回: <p>hello</p>
+                data.field["[myparm_editClumnName]"] = ue.getContent();
+
+                //获取纯文本内容，返回: hello
+                //var txt = ue.getContentTxt();
+            });
+
+
+            kehenbar.send('/database/tableEditSave', data.field, function (res) {
+                layer.alert(res, function (index) {
+
+                    layer.close(index);
+                    return false;
+                })
+            })
+            return false;
+        })
+
+        layui.upload({
+            url: '/database/Image?erjimulu=fourm&biaoming=[myparm_tablename]'
+            , success: function (res) {
+                if (res.code == 0) {
+                    layer.alert("上传成功", function (index) {
+                        
+                        var filepath = res.data.src;
+                        var inputID = res.data.title.replace('file_', '');
+                        $("#tip_" + inputID).attr("src", filepath + "?r=" + Math.random());
+                        $("#fileid_" + inputID).val(filepath);
+                        layer.close(index);
+                        return false;
+                    })
+                } else {
+                    layer.alert(res.msg, function (index) {
+
+                        layer.close(index);
+                        return false;
+                    })
+                }
+
+            }
+        });
+
+        $(function () {
+
+            $(".layui-form").find("input[name=__selectedVal]").each(function (k, v) {
+                var selectVal = $(this).val() || "0";
+                $(this).parent().find("input[type=radio][value=" + selectVal + "]").attr("checked", true);
+                $(this).parent().find("select").val(selectVal);
+            })
+
+            form.render();
+        })
+    })
+</script>
+
+{kehenbar:template src="admin/footer.html"}

@@ -1,0 +1,111 @@
+﻿
+<form class="layui-form">
+    <table class="layui-table">
+        <colgroup>
+            <col width="80">
+            <col width="250">
+            <col width="250">
+            <col>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>表名</th>
+                <th>编号</th>
+                <th>操作
+                    <a href="https://www.ppkanshu.com/content/doc/8" style="color:#01AAED;padding-left:20px;font-weight:normal" target="_blank">如何使用这些功能？</a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {kehenbar:list table=sys_database len=10 order=tcode,id page=p1}
+            <tr>
+                <td>[list:i]</td>
+                <td>[sys_database:tname]</td>
+                <td>
+                    <a href="#" style="color:#01AAED" lay-click lay-filter="addoutkey" data="[sys_database:tcode]">[sys_database:tcode]</a>
+                </td>
+                <td>
+                    <input type="hidden" name="tabletype" value="[sys_database:ttype]" />
+                    <a class="layui-btn layui-btn-mini" lay-click lay-filter="edit" data="[sys_database:tcode]">维护字段</a>
+                    <a class="layui-btn layui-btn-mini layui-btn-normal" lay-click lay-filter="list" data="[sys_database:tcode]">数据列表</a>
+                    <a class="layui-btn layui-btn-mini layui-btn-danger" lay-click lay-filter="create" data="[sys_database:tcode]">格式化表</a>
+                    <a class="layui-btn layui-btn-mini layui-btn-danger" lay-click lay-filter="del" data="[sys_database:tcode]">删除表</a>
+                </td>
+            </tr>
+            {/kehenbar:list}
+            <tr>
+                <td colspan="4">
+                    [kehenbar:page for=p1]
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+<script type="text/javascript">
+    layui.use(['form', 'kehenbar'], function () {
+        var form = layui.form(), kehenbar = layui.kehenbar, $ = layui.jquery;
+        form.on('click(edit)', function (data) {
+
+            layer.open({
+                type: 2,
+                title: "字段列表",
+                content: '/database/tableclumnedit/' + data.data,
+                area: ['99%', '99%']
+            })
+            return false;
+        })
+
+        form.on('click(addoutkey)', function (data) {
+            //alert(data.data);
+            layer.open({
+                type: 2,
+                title: "字段列表",
+                content: '/database/addoutkey/' + data.data,
+                area: ['800px', '600px']
+            })
+            return false;
+        })
+
+
+        form.on('click(list)', function (data) {
+            window.location.href = "/database/datalist/" + data.data + "/10/1";
+            return false;
+        })
+
+        form.on('click(del)', function (data) {
+            layer.confirm("确定要删除表[" + data.data + "]吗？一旦删除，不可恢复。"
+                , function (index) {
+                    layer.alert("执迷不悟！现在还没有删除功能呢-.-", function (index) {
+                        layer.close(index);
+                        return false;
+                    });
+                }
+                , function (index) {
+                    layer.close(index);
+                    return false;
+                })
+            return false;
+        })
+
+        form.on('click(create)', function (data) {
+            layer.confirm("如果数据库中有同名表，将会被删除，确定继续操作吗？"
+                , function (index) {
+                    kehenbar.send('/database/tablecreate/' + data.data, {}, function (res) {
+                        if ("success" == res) {
+                            layer.alert("创建表成功", function (index) {
+                                layer.close(index);
+                                return false;
+                            })
+                        }
+                    })
+                }
+                , function (index) {
+                    layer.close(index);
+                    return false;
+                })
+
+            return false;
+        })
+    })
+</script>

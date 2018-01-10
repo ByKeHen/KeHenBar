@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "添加类别";
+    Layout = "~/Views/_LayoutPage.cshtml";
+}
+
+<form class="layui-form layui-form-pane">
+    <div class="layui-form-item">
+        <div class="layui-form-label">名称</div>
+        <div class="layui-input-block">
+            <input type="text" name="mingcheng" class="layui-input" required lay-verigy="requierd" placeholder="类别名称"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-form-label">是否显示</div>
+        <div class="layui-input-block">
+            <select name="shifouXS">
+                <option value="1">在导航栏显示</option>
+                <option value="2">不显示</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="tijiao">提交</button>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    layui.use(['form', 'ajax'], function () {
+        var form = layui.form(), ajax = layui.ajax;
+
+        form.on('submit(tijiao)', function (data) {
+            //alert(JSON.stringify(data.field));
+ 
+            ajax.send("/category/add", data.field, function (res) {
+        
+                layer.alert(res, function (index) {
+
+                    layer.close(index);
+                    window.location.reload();
+                    return false;
+                })
+            });
+            return false;
+        })
+    })
+</script>

@@ -1,0 +1,48 @@
+﻿<div class="main">
+    <ul class="layui-nav" lay-filter="">
+
+        @{
+            if (string.IsNullOrEmpty(Session["categoryId"] + ""))
+            {
+            <li class="layui-nav-item layui-this"><a href="/">博文</a></li>
+                foreach (var item in @Model)
+                {                
+            <li class="layui-nav-item"><a href="/list/index/@item.cid">@item.cname</a></li>  
+                }
+            }
+            else
+            {
+            <li class="layui-nav-item"><a href="/">博文</a></li>
+                int categoryId = int.Parse(Session["categoryId"] + "");
+                foreach (var item in @Model)
+                {
+                    if (categoryId == item.cid)
+                    {
+            <li class="layui-nav-item layui-this"><a href="/list/index/@item.cid">@item.cname</a></li>  
+                    }
+                    else
+                    {
+            <li class="layui-nav-item"><a href="/list/index/@item.cid">@item.cname</a></li>  
+                    }
+                }
+            }    
+        }
+    </ul>
+    <div style="position: absolute; right: 0px; top: 20px;">
+        <button class="layui-btn layui-btn-mini" lay-filter="open_login" lay-click>登录</button>
+    </div>
+</div>
+<script type="text/javascript">
+    layui.use(['form', 'ajax'], function () {
+        var form = layui.form(), ajax = layui.ajax;
+        form.on('click(open_login)', function (res) {
+            layer.open({
+                title: "用户登录",
+                type: 2,
+                area:['500px','400px'],
+                content: '/member/login'
+            })
+            return false;
+        })
+    })
+</script>

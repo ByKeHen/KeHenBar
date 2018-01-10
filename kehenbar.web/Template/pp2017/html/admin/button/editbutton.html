@@ -1,0 +1,152 @@
+﻿
+<link rel="stylesheet" href="/js/layui/css/layui.css">
+<script src="/js/layui/layui.js"></script>
+{kehenbar:1list table=sys_buttons where=(sys_buttons.id:[mp_id])}
+<form class="layui-form layui-form-pane">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">目标表</label>
+            <div class="layui-input-block">
+                <select name="sys_database_id" required lay-verify="required" lay-search>
+                    <option value=""></option>
+                    {kehenbar:2list table=sys_database orderdesc=id}
+                    <option value="[2sys_database:id]" {kehenbar:if [2sys_database:id]=[1sys_database:id]}selected{/kehenbar:if}>[2sys_database:tname]</option>
+                    {/kehenbar:2list}
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">按钮名称</label>
+            <div class="layui-input-block" style="width: 212px">
+                <input type="text" name="bname" class="layui-input" required lay-verify="required" placeholder="名称会显示在按钮上面" value="[1sys_buttons:bname]"/>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">按钮尺寸</label>
+            <div class="layui-input-block">
+                <select name="chicun">
+                    <option value="layui-btn-mini" {kehenbar:if [1sys_buttons:chicun]=layui-btn-mini}selected{/kehenbar:if}>迷你</option>
+                    <option value="layui-btn-small" {kehenbar:if [1sys_buttons:chicun]=layui-btn-small}selected{/kehenbar:if}>小型</option>
+                    <option value=" " {kehenbar:if [1sys_buttons:chicun]=""}selected{/kehenbar:if}>正常</option>
+                    <option value="layui-btn-big" {kehenbar:if [1sys_buttons:chicun]=layui-btn-big}selected{/kehenbar:if}>巨大</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">按钮颜色</label>
+            <div class="layui-input-block">
+                <select name="yanse">
+                    <option value="layui-btn-primary" {kehenbar:if [1sys_buttons:yanse]=layui-btn-primary}selected{/kehenbar:if}>原始</option>
+                    <option value=" " {kehenbar:if [1sys_buttons:yanse]=""}selected{/kehenbar:if}>默认</option>
+                    <option value="layui-btn-normal" {kehenbar:if [1sys_buttons:yanse]=layui-btn-normal}selected{/kehenbar:if}>百搭</option>
+                    <option value="layui-btn-warm" {kehenbar:if [1sys_buttons:yanse]=layui-btn-warm}selected{/kehenbar:if}>暖色</option>
+                    <option value="layui-btn-danger" {kehenbar:if [1sys_buttons:yanse]=layui-btn-danger}selected{/kehenbar:if}>警告</option>
+                    <option value="layui-btn-disabled" {kehenbar:if [1sys_buttons:yanse]=layui-btn-disabled}selected{/kehenbar:if}>禁用</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">按钮事件</label>
+            <div class="layui-input-block">
+                <select name="benent" required lay-verify="required">
+                    <option value=""></option>
+                    <option value="1" {kehenbar:if [1sys_buttons:benent]=1}selected{/kehenbar:if}>增加</option>
+                    <option value="2" {kehenbar:if [1sys_buttons:benent]=2}selected{/kehenbar:if}>删除</option>
+                    <option value="3" {kehenbar:if [1sys_buttons:benent]=3}selected{/kehenbar:if}>修改</option>
+                    <option value="4" {kehenbar:if [1sys_buttons:benent]=4}selected{/kehenbar:if}>查询</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">打开方式</label>
+            <div class="layui-input-block">
+                <select name="bopentype" required lay-verify="required">
+                    <option value=""></option>
+                    <option value="1" {kehenbar:if [1sys_buttons:bopentype]=1}selected{/kehenbar:if}>本页面打开</option>
+                    <option value="2" {kehenbar:if [1sys_buttons:bopentype]=2}selected{/kehenbar:if}>新页面打开</option>
+                    <option value="3" {kehenbar:if [1sys_buttons:bopentype]=3}selected{/kehenbar:if}>弹出框</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <input type="radio" name="tankuangchicun" lay-filter="bfb_radio" value="1" title="百分比" {kehenbar:if [1sys_buttons:tankuangchicun]=1}checked{/kehenbar:if}>
+            <input type="radio" name="tankuangchicun" lay-filter="bfb_radio" value="2" title="像素" {kehenbar:if [1sys_buttons:tankuangchicun]=2}checked{/kehenbar:if}>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">弹框尺寸</label>
+        <div class="layui-input-block">
+            <div class="layui-inline layui-hide" id="bfb_radio_1">
+                <div class="layui-input-inline" style="width: 88px">
+                    <input class="layui-input" type="text" name="baifenbi_k" value="[1sys_buttons:baifenbi_k]" placeholder="弹出框的宽度百分比">
+                </div>
+                <div class="layui-input-inline" style="width: 88px">
+                    <input class="layui-input" type="text" name="baifenbi_g" value="[1sys_buttons:baifenbi_g]" placeholder="弹出框的高度百分比">
+                </div>
+                <div class="layui-form-mid layui-word-aux">%</div>
+            </div>
+            <div class="layui-inline" id="bfb_radio_2">
+                <div class="layui-input-inline" style="width: 88px">
+                    <input class="layui-input" type="text" name="xiangsu_k" value="[1sys_buttons:xiangsu_k]" placeholder="弹出框的宽度像素">
+                </div>
+                <div class="layui-input-inline" style="width: 88px">
+                    <input class="layui-input" type="text" name="xiangsu_g" value="[1sys_buttons:xiangsu_g]" placeholder="弹出框的高度像素">
+                </div>
+                <div class="layui-form-mid layui-word-aux">px</div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">模版路径</label>
+        <div class="layui-input-block">
+            <input class="layui-input" type="text" name="templatepath" placeholder="要打开的页面的模版路径" value="[1sys_buttons:templatepath]">
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">参数列表</label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea" name="canshuliebiao" placeholder="多个参数用英文逗号分割">[1sys_buttons:canshuliebiao]</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">按钮HTML</label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea" id="anniuhtml" placeholder="生成的按钮HTML,直接复制到模版文件即可使用。">[1sys_buttons:id]</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <button class="layui-btn" lay-submit lay-filter="edit">提交修改</button>
+    </div>
+    <input type="hidden" name="__tablename" value="sys_buttons"/>
+    <input type="hidden" name="__rowid" value="[mp_id]"/>
+</form>
+{/kehenbar:1list}
+<script type="text/javascript">
+    layui.use(['form', 'kehenbar'], function () {
+        var form = layui.form(), kehenbar = layui.kehenbar, $ = layui.jquery;
+
+        form.on('radio(bfb_radio)', function (data) {
+            $("#bfb_radio_" + data.value).parent().children("div").removeClass("layui-hide").addClass("layui-hide");
+            $("#bfb_radio_" + data.value).removeClass("layui-hide");
+            //form.render();
+            return false;
+        })
+
+        form.on('submit(edit)', function (data) {
+
+            kehenbar.buttonFuncSave(data.field, function (res) {
+                res = JSON.parse(res);
+                layer.alert(res.msg, function (index) {
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index); 
+                    return false;
+                })
+            })
+            return false;
+        })
+    })
+</script>

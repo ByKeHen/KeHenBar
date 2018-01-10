@@ -1,0 +1,87 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>用户主页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="fly,layui,前端社区">
+    <meta name="description" content="Fly社区是模块化前端UI框架Layui的官网社区，致力于为web开发提供强劲动力">
+</head>
+<body style="margin-top: 65px;">
+
+    {kehenbar:template src="header.html"}
+
+    <div class="fly-home" style="background-image: url();">
+        {kehenbar:list table=users where=(users.id:[myparm_userid]) len=1}
+        <img src="[users:face]" alt="[users:name]">
+        <h1>
+            [users:name]
+            <i class="iconfont {kehenbar:if [users:sex]=1}icon-nan{/kehenbar:if}{kehenbar:if [users:sex]=2}icon-nv{/kehenbar:if}"></i>
+        </h1>
+        <p class="fly-home-info">
+            <i class="iconfont icon-zuichun" title="飞吻"></i><span style="color: #FF7200;">[users:feiwen]飞吻</span>
+            <i class="iconfont icon-shijian"></i><span>[users:registerdate] 加入</span>
+            <i class="iconfont icon-chengshi"></i><span>来自[users:city]</span>
+        </p>
+        <p class="fly-home-sign">（[users:jianjie]）</p>
+        {/kehenbar:list}
+    </div>
+
+    <div class="main fly-home-main">
+        <div class="layui-inline fly-home-jie">
+            <div class="fly-panel">
+                <h3 class="fly-panel-title">最近的提问</h3>
+                <ul class="jie-row">
+                    {kehenbar:list table=forums where=(forums.users_id:[myparm_userid]) orderdesc=id len=10}
+                    <li>
+                        {kehenbar:if [forums:isjing]=1}
+                        <span class="fly-jing">精</span>
+                        {/kehenbar:if}
+                        <a href="/content/index/[forums:id]" class="jie-title">[forums:title]</a>
+                        <i>[forums:addtime]</i>
+                        <em>[forums:seecount]阅/[forums:writecount]答</em>
+                    </li>
+                    {/kehenbar:list}
+                </ul>
+                {kehenbar:count table=forums where=(forums.users_id:[myparm_userid])}
+                {kehenbar:if [count:num]=0}
+                <div class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;"><i style="font-size:14px;">没有发表任何求解</i></div>
+                {/kehenbar:if}
+                {/kehenbar:count}
+            </div>
+        </div>
+
+        <div class="layui-inline fly-home-da">
+            <div class="fly-panel">
+                <h3 class="fly-panel-title">最近的回答</h3>
+                <ul class="home-jieda">
+                    {kehenbar:list table=forumscomment where=(forumscomment.users_id:[myparm_userid]) orderdesc=id len=10}
+                    <li>
+                        <p>
+                            <span>[forumscomment:addtime]</span>
+                            在<a href="/content/index/[forums:id]" target="_blank">[forums:title]</a>中回答：
+                        </p>
+                        <div class="home-dacontent">
+                            [forumscomment:content]
+                        </div>
+                    </li>
+                    {/kehenbar:list}
+                </ul>
+                {kehenbar:count table=forumscomment where=(forumscomment.users_id:[myparm_userid])}
+                {kehenbar:if [count:num]=0}
+                <div class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;">
+                    <span>没有回答任何问题</span>
+                </div>
+                {/kehenbar:if}
+                {/kehenbar:count}
+            </div>
+        </div>
+
+    </div>
+
+    {kehenbar:template src="footer.html"}
+
+
+</body>
+</html>

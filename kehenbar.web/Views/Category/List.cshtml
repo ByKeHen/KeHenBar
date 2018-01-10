@@ -1,0 +1,62 @@
+﻿@{
+    ViewBag.Title = "类别列表";
+    Layout = "~/Views/_LayoutPage.cshtml";    
+}
+
+<form class="layui-form">
+    <table class="layui-table">
+        <colgroup>
+            <col width="150">
+            <col width="200">
+            <col width="200">
+            <col width="200">
+            <col>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>分类名称</th>
+                <th>添加时间</th>
+                <th>是否显示</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int xuhao = 1;
+                foreach (var item in Model)
+                {
+            <tr>
+                <td>@xuhao</td>
+                <td>@item.cname</td>
+                <td>@item.ctime</td>
+                <td>
+                    @if (1 == @item.cshow)
+                    {
+                        @:是
+                    }else
+                    {
+                        @:否
+                    }
+                </td>
+                <td>
+                    <a class="layui-btn layui-btn-mini" lay-click lay-filter="edit" data="@item.cid">编辑</a>
+                </td>
+            </tr>
+                    xuhao++;
+                }    
+            }
+            
+        </tbody>
+    </table>
+</form>
+<script type="text/javascript">
+    layui.use(['form', 'ajax'], function () {
+        var form = layui.form(), ajax = layui.ajax;
+
+        form.on('click(edit)', function (data) {
+            window.location.href = '/category/edit/' + data.data;
+            return false;
+        })
+    })
+</script>

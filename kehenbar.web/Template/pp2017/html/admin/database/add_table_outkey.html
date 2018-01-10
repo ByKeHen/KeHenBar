@@ -1,0 +1,131 @@
+﻿<link href="/js/layui/css/layui.css" rel="stylesheet" />
+<script src="/js/layui/layui.js"></script>
+
+<form class="layui-form layui-form-pane">
+    <div class="layui-form-item">
+        <label class="layui-form-label">关联表</label>
+        <div class="layui-input-block">
+            <select name="toutkey">
+                {kehenbar:list table=sys_database order=id}
+                <option value="[sys_database:tcode]">[sys_database:tname]</option>
+                {/kehenbar:list}
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <button class="layui-btn" lay-submit lay-filter="save">确定</button>
+        <a href="https://www.ppkanshu.com/content/doc/7" style="color:#01AAED;padding-left:20px" target="_blank">看文档？</a>
+    </div>
+</form>
+<form class="layui-form layui-form-pane">
+    <div class="layui-form-item">
+        <table class="layui-table">
+            <colgroup>
+                <col width="150">
+                <col width="200">
+                <col>
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>表名</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="content_outkey">
+                
+            </tbody>
+        </table>
+    </div>
+</form>
+
+<script type="text/javascript">
+    layui.use(['form', 'kehenbar'], function () {
+        var form = layui.form(), kehenbar = layui.kehenbar, $ = layui.jquery;
+
+        var toutkeyArr = [];
+        $(function () {
+
+            var toukeystr = "[myparm_toukeystr]";
+            if (toukeystr) {
+                toutkeyArr = toukeystr.split(',');
+            }
+            var contentHtmlTemp = [
+                "<tr>",
+                "    <td>#i#</td>",
+                "    <td>#toutkey#</td>",
+                "    <td>",
+                "        <button class=\"layui-btn layui-btn-mini\" lay-click lay-filter=\"del\" data=\"#toutkey#\">删除</button>",
+                "    </td>",
+                "</tr>"
+            ].join("");
+
+            var contentHtml = "";
+            $(toutkeyArr).each(function (k, v) {
+                contentHtml += contentHtmlTemp.replace(/#toutkey#/g, v).replace("#i#", (k + 1));
+            })
+            if (toutkeyArr.length > 0) {
+                $("#content_outkey").html(contentHtml);
+            } else {
+                $("#content_outkey").html([
+                     "<tr>"
+                    ,"    <td colspan=\"4\">暂无数据</td>"
+                    ,"</tr>"
+                ].join(""));
+            }
+        })
+
+        form.on('submit(save)', function (data) {
+            
+            if (!toutkeyArr.contains(data.field.toutkey)) {
+                toutkeyArr.push(data.field.toutkey);
+            }
+
+            var o = {};
+            o.action = 'update'
+            o.table = 'sys_database';
+            o.where = 'tcode=[myparm_tcode]';
+            o.field = JSON.stringify({ toutkey: toutkeyArr.join(',') });
+
+            kehenbar.send("/database/outkeyadd", { tcode: "[myparm_tcode]", toutkey: toutkeyArr.join(',') }, function (res) {
+                res = JSON.parse(res);
+                layer.alert(res.msg, function (index) {
+                    layer.close(index);
+                    window.location.reload();
+                    return false;
+                })
+            })
+            return false;
+        })
+
+        form.on('click(del)', function (data) {
+
+            var toutkey = data.data;
+            toutkeyArr.removeByValue(toutkey);
+
+            kehenbar.send("/database/OutkeyDel", { tcode: "[myparm_tcode]", toutkey: toutkeyArr.join(',') }, function (res) {
+                res = JSON.parse(res);
+                layer.alert(res.msg, function (index) {
+                    layer.close(index);
+                    return false;
+                })
+            })
+            return false;
+        })
+
+        Array.prototype.contains = function (needle) {
+            for (i in this) {
+                if (this[i] == needle) return true;
+            }
+            return false;
+        }
+        Array.prototype.removeByValue = function (val) {
+            for (var i = 0; i < this.length; i++) {
+                if (this[i] == val) {
+                    this.splice(i, 1);
+                    break;
+                }
+            }
+        }
+    })
+</script>

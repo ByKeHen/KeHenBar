@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html style="background-color: #fff">
+<head>
+    <meta charset="utf-8">
+    {kehenbar:content table=siteconfig where=(id:1)}
+    <title>[siteconfig:title]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="[siteconfig:sitekeys]">
+    <meta name="description" content="[siteconfig:desc]">
+    {/kehenbar:content}
+    <style type="text/css">
+        .doc-content {
+            width: 860px;
+            min-height: 600px;
+            float: right;
+            background-color: #fff;
+            padding: 5px 5px 5px 5px;
+        }
+
+            .doc-content img {
+                max-width: 100%;
+                cursor: crosshair;
+            }
+    </style>
+</head>
+<body>
+    {kehenbar:template src="header.html"}       
+    <div class="main layui-clear">        
+        <div class="wrap">            
+            <div class="content" style="margin-right: 0">
+                <div style="overflow-y: auto; width: 210px; float: left; position: fixed; top: 70px; bottom: 5px">
+                    <ul class="layui-nav layui-nav-tree">
+                        {kehenbar:1list table=fwarticle where=(state:1,leval:1) order=order}
+                        <li class="layui-nav-item layui-nav-itemed">
+                            <a href="javascript:;">[1fwarticle:name]</a>
+                            <dl class="layui-nav-child">
+                                {kehenbar:2list table=fwarticle where=(state:1,pid:[1fwarticle:id]) order=order}
+                                <dd>
+                                    <a href='{kehenbar:if [2fwarticle:url]=""}/content/doc/[2fwarticle:id]{else}[2fwarticle:url]{/kehenbar:if}' {kehenbar:if [myparm_id]=[2fwarticle:id]}style="color: #5FB878;"{/kehenbar:if}>[2fwarticle:name]</a>
+                                </dd>
+                                {/kehenbar:2list}
+                            </dl>
+                        </li>
+                        {/kehenbar:1list}
+                    </ul>
+                </div>
+                <div class="doc-content">
+                    {kehenbar:content table=fwarticle where=(id:[myparm_id])} 
+                        [fwarticle:content]
+                    {/kehenbar:content}  
+                       
+                    <div style="margin-top:20px;position:relative;width:100%;height: 35px;background-color: #eee;">
+                        <div style="width:100px;position:absolute;left:0px;top:6px;text-align: center;">分享文档</div>
+                        <div style="width:333px;position:absolute;left:100px">{kehenbar:template src=plugin/share.html}</div>
+                    </div>                    
+                </div>                                             
+            </div>
+        </div>
+    </div>
+
+    {kehenbar:template src="footer.html"}
+</body>
+</html>
+<script type="text/javascript">
+    $(function () {
+        layui.use(['element', 'code'], function () {
+            var element = layui.element(), layer = layui.layer;
+            layui.code({
+                elem: 'pre',
+                about: false
+            });
+
+            layer.photos({
+                photos: '.doc-content'
+                , anim: 5 //0-6的选择，指定弹出图片动画类型。
+            });
+        });
+    })
+</script>

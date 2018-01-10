@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    {kehenbar:content table=siteconfig where=(id:1)}
+    <title>[siteconfig:title]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="[siteconfig:sitekeys]">
+    <meta name="description" content="[siteconfig:desc]">
+    {/kehenbar:content}
+</head>
+<body>
+    {kehenbar:template src="header.html"}
+
+    <div class="main layui-clear">
+        <div class="fly-panel" pad20>
+            <h2 class="page-title">编辑帖子</h2>
+            <div class="layui-form layui-form-pane">
+                {kehenbar:content table=forums where=(forums.id:[myparm_id])} 
+                <form action="" method="post">
+                    <div class="layui-form-item">
+                        <label for="L_title" class="layui-form-label">标题</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="L_title" name="title" required lay-verify="required" autocomplete="off" class="layui-input" value="[forums:title]">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-form-text">
+                        <div class="layui-input-block">
+                            <textarea id="L_content" name="content" placeholder="请输入内容" class="layui-textarea fly-editor" style="height: 260px;">[forums:content]</textarea>
+                        </div>
+                        <label for="L_content" class="layui-form-label" style="top: -2px;">描述</label>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">所在类别</label>
+                            <div class="layui-input-block">
+                                <select lay-verify="required" name="leibie">
+                                    <option value=""></option>
+                                    {kehenbar:1list table=forumstype}
+                                    <option value="[forumstype:id]" {kehenbar:if [forums:forumstype_id]=[1forumstype:id]}selected{/kehenbar:if}>[1forumstype:name]</option>
+                                    {/kehenbar:1list}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">悬赏飞吻</label>
+                            <div class="layui-input-block">
+                                <select name="experience">
+                                    <option value="5" {kehenbar:if [forums:feiwen]=5}selected{/kehenbar:if}>5</option>
+                                    <option value="20" {kehenbar:if [forums:feiwen]=20}selected{/kehenbar:if}>20</option>
+                                    <option value="50" {kehenbar:if [forums:feiwen]=50}selected{/kehenbar:if}>50</option>
+                                    <option value="100" {kehenbar:if [forums:feiwen]=100}selected{/kehenbar:if}>100</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label for="L_vercode" class="layui-form-label">人类验证</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="L_vercode" name="vercode" required lay-verify="required" placeholder="请回答后面的问题" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid">
+                            <span style="color: #c00;">[VerCode]</span>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <input name="tieid" value="[myparm_id]" type="hidden"/>
+                        <button class="layui-btn" lay-filter="baocun" lay-submit>保存</button>
+                    </div>
+                </form>
+                {/kehenbar:content} 
+            </div>
+        </div>
+    </div>
+    {kehenbar:template src="footer.html"} 
+</body>
+</html>
+<script>
+    layui.use(['layedit', 'form', 'kehenbar'], function () {
+        var layedit = layui.layedit, form = layui.form(), kehenbar = layui.kehenbar, $ = layui.jquery;
+
+        layedit.set({
+
+            uploadImage: {
+                url: '/upload/image?f=forums/[myparm_id]'
+            }
+        });
+        var myedit = layedit.build('L_content', {
+            tool: ['left', 'center', 'right', '|', 'face', 'image', 'code']
+        });
+
+
+        form.on('submit(baocun)', function (data) {
+
+            var editContent = layedit.getContent(myedit);
+            if (!editContent) {
+                layer.alert("内容不能为空");
+                return false;
+            }
+
+            data.field.content = editContent;
+
+            var userid = "[myparm_userid]";
+            if (!userid) {
+                layer.confirm("您还没有登录,去登陆？", function (index) {
+                    layer.open({
+                        type: 2,
+                        title: "快速登录",
+                        area: ["420px", "480px"],
+                        content: "/member/LoginFast"
+                    })
+                    return false;
+                }, function (index) {
+                    layer.close(index);
+                    return false;
+                });
+            }
+
+            kehenbar.send("/content/EditSave", data.field, function (res) {
+
+                res = JSON.parse(res);
+                layer.alert(res.msg, function (index) {
+                    layer.close(index);
+                    window.location.href = "/content/index/[myparm_id]";
+                    return false;
+                });
+            });
+            return false;
+        })
+    });
+</script>

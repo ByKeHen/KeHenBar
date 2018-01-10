@@ -1,0 +1,29 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <script src="/js/jquery-1.8.3.min.js"></script>
+    <script src="/js/com/upload.js"></script>
+    <title>复制粘贴上传</title>
+</head>
+<body>
+    <div id="upload"></div>
+</body>
+</html>
+<script type="text/javascript">
+    //粘贴自动上传
+    $("#upload").upload({
+        action: "/test/upload"
+    }, function (data) {
+        //回调函数
+        alert(data);
+    }, function (err) {
+
+        alert(err);
+    });
+</script>

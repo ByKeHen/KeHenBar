@@ -1,0 +1,66 @@
+﻿{kehenbar:template src="admin/header.html"}
+
+<div class="layui-tab layui-tab-brief" lay-filter="triggerTab">
+    <ul class="layui-tab-title">
+        <li class="layui-this">新建触发器</li>
+        <li>现有触发器</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            {kehenbar:template src=admin/trigger/addtrigger.html}            
+        </div>
+        <div class="layui-tab-item">
+            <table class="layui-table">
+                <colgroup>
+                    <col width="80">
+                    <col width="200">
+                    <col width="200">
+                    <col width="200">
+                    <col>
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>编号</th>
+                        <th>表</th>
+                        <th>事件</th>
+                        <th>名称</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {kehenbar:list table=sys_trigger orderdesc=sys_database_id len=15 page=p1}
+                    <tr class="layui-form">
+                        <td>[list:i]</td>
+                        <td>[sys_database:tname]</td>
+                        <td>{kehenbar:if [sys_trigger:event]=add}增加{/kehenbar:if}
+                            {kehenbar:if [sys_trigger:event]=del}删除{/kehenbar:if}
+                            {kehenbar:if [sys_trigger:event]=upd}更新{/kehenbar:if}
+                            {kehenbar:if [sys_trigger:event]=sel}查询{/kehenbar:if}
+                        </td>
+                        <td>[sys_trigger:tiggername]</td>
+                        <td>{kehenbar:button id=4}
+                            {kehenbar:button id=9}
+                        </td>
+                    </tr>
+                    {/kehenbar:list}
+                </tbody>
+            </table>
+            [kehenbar:page for=p1]
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    layui.use(['form', 'kehenbar', 'element'], function () {
+        var form = layui.form(), kehenbar = layui.kehenbar, $ = layui.jquery, element = layui.element();
+
+        //编辑
+        form.on("submit(edit)", function (data) {
+
+            return false;
+        })
+    })
+</script>
+
+{kehenbar:template src="admin/footer.html"}
+

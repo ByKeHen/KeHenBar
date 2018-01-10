@@ -1,0 +1,72 @@
+﻿{kehenbar:template src="admin/header.html"}
+<style type="text/css">
+    .db-top-menu {width: 100%;}
+    .db-top-menu li {list-style: none;width: 100px;line-height: 45px;float: left;}
+    .db-top-menu li a {height: 45px;display: block;padding: 0 10px;display: block;cursor: pointer;}
+    .db-top-menu li i {font-size: 20px;position: relative;top: 1px;margin-right: 5px;}
+    .db-top-menu-bar {z-index: 1000;position: absolute;left: 50px;top: 45px;width: 0;height: 5px;background-color: #5FB878;transition: all .2s;-webkit-transition: all .2s;}
+    .pp-this {border-bottom: 5px solid #5FB878;}
+</style>
+
+<div style="position:relative;width:100%;min-height:600px">
+    <div style="height: 50px; border-bottom: 1px solid #1E9FFF">
+        <ul class="db-top-menu">
+            <li class="pp-this" data="table">
+                <a><i class="layui-icon">&#xe62d;</i>数据表</a>
+            </li>
+            <li data="add">
+                <a><i class="layui-icon">&#xe654;</i>新建表</a>
+            </li>
+            <span class="db-top-menu-bar"></span>
+        </ul>
+    </div>
+    <div style="height:100%" id="db_tab_content">
+        <div data="table">
+            {kehenbar:template src="admin/database/get_tables.html"}
+        </div>
+        <div data="add" style="display:none">
+            {kehenbar:template src="admin/database/add_table.html"}
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    layui.use('jquery', function () {
+        var $ = layui.jquery;
+        $(function () {
+            $(".db-top-menu li").hover(function () {
+                var var_left = parseInt($(this).index()) * 100;
+                var $var = $(".db-top-menu-bar");
+                $var.css({
+                    left: var_left + "px",
+                    top: "45px",
+                    width: "100px",
+                    opacity: 1
+                })
+            }, function () {
+                var var_left = parseInt($(this).index()) * 100 + 50;
+                var $var = $(".db-top-menu-bar");
+                $var.css({
+                    left: var_left + "px",
+                    top: "45px",
+                    width: "0px",
+                    opacity: "0"
+                })
+            }).click(function () {
+                var _data = $(this).attr("data");
+                window.location.href = "#" + _data;
+                var _url = window.location.href;
+                var _parm = "table";
+                if (_url.indexOf('#')) {
+                    _parm = _url.split('#')[1];
+                }
+
+                $(".db-top-menu li").removeClass('pp-this');
+                $(this).addClass('pp-this');
+                $("#db_tab_content").children("div").hide();
+                $("#db_tab_content").children("div[data=" + _parm + "]").show();
+            })
+        })
+    })
+</script>
+
+{kehenbar:template src="admin/footer.html"}

@@ -1,0 +1,125 @@
+﻿@{
+    ViewBag.Title = "文章列表";
+    Layout = "~/Views/_LayoutPage.cshtml";
+}
+<form class="layui-form">
+    <table class="layui-table">
+        <colgroup>
+            <col width="100">
+            <col>
+            <col width="250">
+            <col width="250">
+            <col width="250">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>标题</th>
+                <th>作者</th>
+                <th>发布时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="view_list">
+            @{
+                int xh = 1;
+                foreach (var item in @Model)
+                {
+                    <tr>
+                        <td>@xh</td>
+                        <td><a href="/article/edit/@item.aid" style="color:#01AAED;overflow:hidden">@item.atitle</a></td>
+                        <td>@item.aAuthor</td>
+                        <td>@item.adatetime</td>
+                        <td>
+                            <a href="/article/edit/@item.aid" class="layui-btn layui-btn-mini" lay-click>编辑</a>
+                            <a data="@item.aid" lay-click lay-filter="del"  class="layui-btn layui-btn-mini">删除</a>
+                            <a data="@item.aid" lay-click lay-filter="tuisong" class="layui-btn layui-btn-mini">推送</a>
+                        </td>
+                    </tr>
+                
+                    xh++;
+                }    
+            }
+            
+        </tbody>
+    </table>
+    <div id="view_page"></div>
+</form>
+<script type="text/html" id="tpl_list">
+    {{#layui.each(d.list,function(index,item){}}
+    <tr>
+        <td>{{index+1}}</td>
+        <td><a href="/article/edit/{{item.aid}}" style="color:#01AAED;overflow:hidden">{{item.atitle}}</a></td>
+        <td>{{item.aAuthor}}</td>
+        <td>{{item.adatetime}}</td>
+        <td>
+            <a href="/article/edit/{{item.aid}}" class="layui-btn layui-btn-mini" lay-click>编辑</a>
+            <a data="{{item.aid}}" lay-click class="layui-btn layui-btn-mini">删除</a>
+        </td>
+    </tr>
+    {{#})}}
+</script>
+
+<script type="text/javascript">
+    layui.use(['form', 'ajax', 'laytpl', 'laypage'], function () {
+        var form = layui.form(), ajax = layui.ajax, laytpl = layui.laytpl, laypage = layui.laypage;
+
+        laypage({
+            cont: 'view_page'
+            , pages: @ViewBag.PageCount
+            , skin: '#1E9FFF'
+            , first: false
+            , last: false
+            , prev: false
+            , next: false
+            , jump: function(obj, first){
+                var page = obj.curr; //当前页
+                ajax.send("/article/ListByPage",{page:page},function(res){
+                    if(!first){
+                        BindTemplate(res);
+                    }
+                })
+            }
+        });
+
+        function BindTemplate(data){
+            
+            data = {list:data};
+            //alert(JSON.stringify(data));
+            var getTpl = tpl_list.innerHTML;
+            laytpl(getTpl).render(data, function (html) {
+                view_list.innerHTML = html;
+            });
+        }
+
+        ///删除
+        form.on("click(del)",function(data){
+            
+            layer.confirm("确定要删除这篇文章吗？",function(index){                
+                layer.close(index);
+                window.location.href="/article/del/"+data.data;
+            },function(index){
+                layer.close(index);
+                return false;
+            })
+            return false;
+        })
+
+        ///向百度推送文章
+        form.on("click(tuisong)",function(data){
+            
+            layer.confirm("确定要推送这篇文章吗？",function(index){                
+                layer.close(index);
+
+                ajax.send("/seo/Tswz/"+data.data,{},function(res){
+                    
+                    layer.alert(res);
+                });
+            },function(index){
+                layer.close(index);
+                return false;
+            })
+            return false;
+        })
+    })
+</script>

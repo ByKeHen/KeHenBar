@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>kehenbar内容管理系统安装页面</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="kehenbar_kehenbar内容管理系统_安装">
+    <meta name="description" content="kehenbar内容管理系统安装页面，通过页面配置即可安装使用。">
+    <link href="/js/layui/css/layui.css" rel="stylesheet" />
+    <script src="/js/jquery-1.8.3.min.js"></script>
+    <script src="/js/layui/layui.js"></script>
+</head>
+<body style="background-color: #fbfbfb">
+    <div style="height: 111px"></div>
+    <form id="step1" class="layui-form layui-main" style="width: 600px; background-color: #f2f2f2">
+        <div style="height: 10px"></div>
+        <div class="layui-form-item">
+            <label class="layui-input-block" style="font-size: 26px">kehenbar内容管理系统-安装</label>
+            <hr />
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">数据库类型</label>
+            <div class="layui-input-block">
+                <input type="radio" name="shujukuleixing" value="1" title="SqlServer2008" checked>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">服务器地址</label>
+            <div class="layui-input-block">
+                <input type="text" name="dizhi" class="layui-input" placeholder="数据库服务器地址" lay-verify="required" style="width: 444px">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">数据库名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="mingcheng" class="layui-input" placeholder="服务器上的数据库名称" lay-verify="required" style="width: 444px">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-block">
+                <input type="text" name="yonghuming" class="layui-input" placeholder="数据库登录名" lay-verify="required" style="width: 444px">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">登录密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="mima" class="layui-input" placeholder="数据库登录密码" lay-verify="required" style="width: 444px">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="next">下一步</button>
+            </div>
+        </div>
+        <div style="height: 10px"></div>
+    </form>
+
+    <form id="step2" class="layui-form layui-main layui-hide" style="width: 600px; background-color: #f2f2f2">
+        <div style="height: 10px"></div>
+        <div class="layui-form-item">
+            <label class="layui-input-block" style="font-size: 26px">kehenbar内容管理系统-创建表</label>
+            <hr />
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">安装模块</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="mokuai" value="1" title="kehenbar社区" checked disabled>
+            </div>
+        </div>
+        <!--<div class="layui-form-item">
+            <label class="layui-form-label">安装进度</label>
+            <div class="layui-input-block">
+                <div class="layui-progress">
+                    <div class="layui-progress-bar" lay-percent="0%" lay-filter="azjd"></div>
+                </div>
+            </div>
+        </div>-->
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" id="lianjie" name="lianjie" value=""/>
+                <input type="hidden" id="dbname" name="dbname" value=""/>
+                <button class="layui-btn" lay-submit lay-filter="create">创建</button>
+            </div>
+        </div>
+        <div style="height: 10px"></div>
+    </form>
+    <script>
+        //Demo
+        layui.use(['form', 'kehenbar', 'element'], function () {
+            var form = layui.form(), kehenbar = layui.kehenbar,element = layui.element();
+
+            //监听提交
+            form.on('submit(next)', function (data) {
+                kehenbar.send("/home/createConnection", data.field, function (res) {
+                    res = JSON.parse(res);
+                    if ("0" == res.code) {
+                        $("#step1").addClass("layui-hide");
+                        $("#step2").removeClass("layui-hide");
+                        $("#lianjie").val(res.connection);
+                        $("#dbname").val(res.dbname);
+                    } else {
+                        layer.msg("数据库连接失败", { icon: 6 })
+                    }
+                })
+                return false;
+            });
+
+            //监听提交
+            form.on('submit(create)', function (data) {
+                kehenbar.send("/home/createTable",data.field, function (res) {
+                    res = JSON.parse(res);
+                    if ("0" == res.code) {
+                        layer.alert("安装完成", function () {
+                            window.location.href = "/";
+                            return false;
+                        })
+                    } else {
+                        layer.msg("创建表失败", { icon: 6 })
+                    }
+                })
+                return false;
+            });
+        });
+    </script>
+</body>
+</html>

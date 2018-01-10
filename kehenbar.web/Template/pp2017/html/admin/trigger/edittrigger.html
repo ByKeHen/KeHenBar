@@ -1,0 +1,185 @@
+﻿
+<link rel="stylesheet" href="/js/layui/css/layui.css">
+<script src="/js/layui/layui.js"></script>
+{kehenbar:1list table=sys_trigger where=(sys_trigger.id:[mp_id])}
+<form class="layui-form layui-form-pane">
+    <div class="layui-form-item">
+        <label class="layui-form-label">选择目标表</label>
+        <div class="layui-input-inline" style="width: 300px">
+            <select name="sys_database_id" lay-search lay-filter="table">
+                <option value="">选择一张表</option>
+                {kehenbar:2list table=sys_database orderdesc=id}
+                    <option value="[2sys_database:id]" {kehenbar:if [2sys_database:id]=[1sys_database:id]}selected{/kehenbar:if}>[2sys_database:tname]</option>
+                {/kehenbar:2list}
+            </select>
+        </div>
+        <div class="layui-input-inline" style="width: 400px">
+
+            <input type="radio" name="event" value="add" title="增加" {kehenbar:if [1sys_trigger:event]=add}checked{/kehenbar:if}>
+            <input type="radio" name="event" value="del" title="删除" {kehenbar:if [1sys_trigger:event]=del}checked{/kehenbar:if}>
+            <input type="radio" name="event" value="upd" title="修改" {kehenbar:if [1sys_trigger:event]=upd}checked{/kehenbar:if}>
+            <input type="radio" name="event" value="sel" title="查询" {kehenbar:if [1sys_trigger:event]=sel}checked{/kehenbar:if}>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">触发器名称</label>
+        <div class="layui-input-block">
+            <input name="tiggername" class="layui-input" placeholder="其实就是简短的中文描述" value="[1sys_trigger:tiggername]"/>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <div class="layui-form-label" style="padding: 0px; height: 32px">
+            <div class="layui-btn-group">
+                <button class="layui-btn layui-btn-danger layui-btn-small" title="全部清空" lay-click lay-filter="qingkong">
+                    <i class="layui-icon">&#xe640;</i>
+                </button>
+                <button class="layui-btn layui-btn-primary layui-btn-small" title="格式化语句" lay-click lay-filter="geshihua">
+                    <i class="layui-icon">&#xe631;</i>
+                </button>
+                <button class="layui-btn layui-btn-primary layui-btn-small" title="验证sql语句" lay-submit lay-filter="yanzheng">
+                    <i class="layui-icon">&#xe605;</i>
+                </button>
+                <button class="layui-btn layui-btn-primary layui-btn-small" title="执行sql语句" lay-submit lay-filter="zhixing">
+                    <i class="layui-icon">&#xe62c;</i>
+                </button>
+                <button class="layui-btn layui-btn-primary layui-btn-small" title="保存" lay-submit lay-filter="baocun">
+                    <i class="layui-icon">&#xe654;</i>
+                </button>
+            </div>
+        </div>
+        <div class="layui-input-block">
+            <textarea name="sqlcontent" class="layui-textarea" required lay-verify="required" style="min-height: 299px" placeholder="这里写sql语句">[1sys_trigger:sqlcontent]</textarea>
+        </div>
+    </div>
+    <div class="layui-form-item layui-form-text">
+        <div class="layui-form-label">SQL执行结果</div>
+        <div class="layui-input-block" style="margin-top: -10px; overflow-x: scroll">
+            <table class="layui-table layui-elip">
+                <thead id="cxjg_head">
+                </thead>
+                <tbody id="cxjg_body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <input type="hidden" name="__tablename" value="sys_trigger"/>
+    <input type="hidden" name="__rowid" value="[mp_id]"/>
+</form>
+{/kehenbar:1list}
+<script type="text/javascript">
+    layui.use(['form', 'kehenbar'], function () {
+        var form = layui.form(), kehenbar = layui.kehenbar, $ = layui.jquery;
+
+
+        //验证
+        form.on("submit(yanzheng)", function (data) {
+            var loading = layer.load();
+            var sql = data.field.sqlcontent;
+            kehenbar.send("/database/Trigger_YanzhengSQL", { sql: sql }, function (res) {
+                res = JSON.parse(res);
+                layer.alert(res.msg, function (index) {
+                    layer.close(index);
+                    return false;
+                })
+            })
+            layer.close(loading);
+            return false;
+        })
+
+        //保存
+        form.on("submit(baocun)", function (data) {
+            var loading = layer.load();
+            if (data.field.tablename == "") {
+                layer.msg('选择目标表', { icon: 5 });
+                layer.close(loading);
+                return false;
+            }
+            if (data.field.tiggername == "") {
+                layer.msg('填写触发器名称', { icon: 5 });
+                layer.close(loading);
+                return false;
+            }
+
+            kehenbar.buttonFuncSave(data.field, function (res) {
+                res = JSON.parse(res);
+                layer.alert(res.msg, function (index) {
+                    layer.close(index);
+                    return false;
+                })
+            })
+            layer.close(loading);
+            return false;
+        })
+
+        //执行
+        form.on("submit(zhixing)", function (data) {
+            var loading = layer.load();
+            var sql = data.field.sqlcontent;
+            kehenbar.send("/database/Trigger_ZhiXingSQL", { sql: sql }, function (res) {
+
+                res = JSON.parse(res);
+                if ("0" == res.code) {
+                    var resdatacount = res.datacount;
+                    var resdata = JSON.parse(res.data);
+
+                    var table_head = "<tr>";
+                    for (var rd in resdata[0]) {
+                        table_head += "<th>" + rd + "</th>";
+                    }
+                    table_head += "</tr>";
+
+                    var table_body = "";
+                    $(resdata).each(function (key, val) {
+                        table_body_tr = "<tr>";
+                        for (var rd in resdata[0]) {
+                            table_body_tr += "<td>" + val[rd] + "</td>";
+                        }
+                        table_body_tr += "</tr>";
+                        table_body += table_body_tr;
+                    })
+
+                    $("#cxjg_head").html(table_head);
+                    $("#cxjg_body").html(table_body);
+                } else if ("1" == res.code) {
+                    layer.alert(res.msg, function (index) {
+                        layer.close(index);
+                        return false;
+                    })
+                } else if ("2" == res.code) {
+                    var resdatacount = res.datacount;
+                    var table_head = "<tr><th>受影响行数</th><th></th></tr>";
+                    var table_body = "<tr><td>" + resdatacount + "</td><td></td></tr>";
+
+                    $("#cxjg_head").html(table_head);
+                    $("#cxjg_body").html(table_body);
+                }
+            })
+
+            layer.close(loading);
+            return false;
+        })
+
+        form.on("click(geshihua)", function (data) {
+            layer.alert("功能开发中", function (index) {
+
+                layer.close(index);
+                return false;
+            });
+            return false;
+        })
+
+        //清空
+        form.on("click(qingkong)", function (data) {
+            layer.confirm("确定要清空sql语句吗？", function (index) {
+
+                layer.close(index);
+                return false;
+            }, function (index) {
+                layer.close(index);
+                return false;
+            })
+
+            return false;
+        })
+    })
+</script>
