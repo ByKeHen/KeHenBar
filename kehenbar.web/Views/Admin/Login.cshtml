@@ -17,13 +17,13 @@
         <div class="layui-form-item">
             <div class="layui-form-label">登录名</div>
             <div class="layui-input-block">
-                <input name="dengluming" type="text" class="layui-input" required lay-verify="required" />
+                <input name="dengluming" type="text" class="layui-input" required lay-verify="required" value="admin" />
             </div>
         </div>
         <div class="layui-form-item">
             <div class="layui-form-label">密码</div>
             <div class="layui-input-block">
-                <input name="mima" type="password" class="layui-input" required lay-verify="required" />
+                <input name="mima" type="password" class="layui-input" required lay-verify="required" value="13955235245b2497" />
             </div>
         </div>
         <div class="layui-form-item">
@@ -33,7 +33,6 @@
 
     <script type="text/javascript">
         layui.use(['form', 'kehenbar'], function () {
-
             var form = layui.form(), kehenbar = layui.kehenbar;
             form.on('submit(denglu)', function (data) {
 

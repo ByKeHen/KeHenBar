@@ -298,7 +298,6 @@ namespace kehenbar.web.Controllers
             main.TempFunc += delegate(Object sender, TempMain.TempFuncEventArgs e)
             {
                 #region 解析自定义函数                
-
                 id = string.IsNullOrEmpty(id) ? "1" : SqlFunction.SqlFilter(id);
                 TempMain tm = (TempMain)sender;
                 tm.content = tm.content.Replace("[myparm_id]", id);

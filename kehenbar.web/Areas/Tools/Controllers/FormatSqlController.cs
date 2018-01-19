@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace myBlog.web.Areas.Tools.Controllers
+namespace kehenbar.web.Areas.Tools.Controllers
 {
     public class FormatSqlController : Controller
     {

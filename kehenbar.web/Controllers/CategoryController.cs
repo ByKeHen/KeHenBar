@@ -1,18 +1,18 @@
-﻿using myBlog.model;
+﻿using kehenbar.model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace myBlog.web.Controllers
+namespace kehenbar.web.Controllers
 {
     [IsLogin]
     public class CategoryController : Controller
     {
         //
         // GET: /Category/
-        myBlogEntities db = new myBlogEntities();
+        kehenbarEntities db = new kehenbarEntities();
         public ActionResult Index()
         {
             return View();

@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace myBlog.web.Areas.Tools
+namespace kehenbar.web.Areas.Tools
 {
     public class ToolsAreaRegistration : AreaRegistration
     {

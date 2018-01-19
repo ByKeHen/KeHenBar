@@ -1,11 +1,11 @@
-﻿using myBlog.web.Models;
+﻿using kehenbar.web.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace myBlog.web.Controllers
+namespace kehenbar.web.Controllers
 {
     public class SeoController : Controller
     {

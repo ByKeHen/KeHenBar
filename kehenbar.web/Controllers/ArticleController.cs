@@ -1,5 +1,5 @@
-﻿using myBlog.model;
-using myBlog.web.Models;
+﻿using kehenbar.model;
+using kehenbar.web.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace myBlog.web.Controllers
+namespace kehenbar.web.Controllers
 {
     
     public class ArticleController : Controller
@@ -15,7 +15,7 @@ namespace myBlog.web.Controllers
         //
         // GET: /Article/
 
-        myBlogEntities db = new myBlogEntities();
+        kehenbarEntities db = new kehenbarEntities();
         [IsLogin]
         public ActionResult Index()
         {

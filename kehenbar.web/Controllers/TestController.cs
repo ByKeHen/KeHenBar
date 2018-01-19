@@ -6,7 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace myBlog.web.Controllers
+namespace kehenbar.web.Controllers
 {
     public class TestController : Controller
     {

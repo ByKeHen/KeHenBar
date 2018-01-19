@@ -24,9 +24,15 @@
     </style>
 </head>
 <body>
-    {kehenbar:template src="header.html"}       
-    <div class="main layui-clear">        
-        <div class="wrap">            
+    {kehenbar:template src="header.html"}
+    <!--<div class="fly-tab fly-tab-index" style="margin:0 auto;width:675px;margin-bottom:10px">
+        <form action=“” class="fly-search">
+            <i class="iconfont icon-sousuo"></i>
+            <input class="layui-input" autocomplete="off" placeholder="搜索内容，回车跳转" type="text" name="value" style="width:450px;">
+        </form>
+    </div>-->
+    <div class="main layui-clear">
+        <div class="wrap">
             <div class="content" style="margin-right: 0">
                 <div style="overflow-y: auto; width: 210px; float: left; position: fixed; top: 70px; bottom: 5px">
                     <ul class="layui-nav layui-nav-tree">
@@ -36,7 +42,7 @@
                             <dl class="layui-nav-child">
                                 {kehenbar:2list table=fwarticle where=(state:1,pid:[1fwarticle:id]) order=order}
                                 <dd>
-                                    <a href='{kehenbar:if [2fwarticle:url]=""}/content/doc/[2fwarticle:id]{else}[2fwarticle:url]{/kehenbar:if}' {kehenbar:if [myparm_id]=[2fwarticle:id]}style="color: #5FB878;"{/kehenbar:if}>[2fwarticle:name]</a>
+                                    <a href='{kehenbar:if [2fwarticle:url]=""}/content/doc/[2fwarticle:id]{else}[2fwarticle:url]{/kehenbar:if}' {kehenbar:if [myparm_id]=[2fwarticle:id]}style ="color: #5FB878;" {/kehenbar:if}>[2fwarticle:name]</a>
                                 </dd>
                                 {/kehenbar:2list}
                             </dl>
@@ -45,19 +51,17 @@
                     </ul>
                 </div>
                 <div class="doc-content">
-                    {kehenbar:content table=fwarticle where=(id:[myparm_id])} 
-                        [fwarticle:content]
-                    {/kehenbar:content}  
-                       
+                    {kehenbar:content table=fwarticle where=(id:[myparm_id])}
+                    [fwarticle:content]
+                    {/kehenbar:content}
                     <div style="margin-top:20px;position:relative;width:100%;height: 35px;background-color: #eee;">
                         <div style="width:100px;position:absolute;left:0px;top:6px;text-align: center;">分享文档</div>
                         <div style="width:333px;position:absolute;left:100px">{kehenbar:template src=plugin/share.html}</div>
-                    </div>                    
-                </div>                                             
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
     {kehenbar:template src="footer.html"}
 </body>
 </html>
@@ -69,7 +73,6 @@
                 elem: 'pre',
                 about: false
             });
-
             layer.photos({
                 photos: '.doc-content'
                 , anim: 5 //0-6的选择，指定弹出图片动画类型。
